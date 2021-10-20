@@ -1,3 +1,5 @@
+package filterClasses;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -5,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 public class LectorCSV {
     Path thisPath = Paths.get(".");
@@ -45,8 +46,11 @@ public class LectorCSV {
 
     // Copia un csv cuyo nombre le pases por parámetro de la carpeta resources a la carpeta copies.
     public void saveModifiedCSV(String nameOfFile, String content) {
+        Path csvModified = Paths.get(resources + File.separator + nameOfFile);
+        if (Files.exists(csvModified)) {
+            csvModified = Paths.get( resources + File.separator + "copia_" + nameOfFile);
+        }
         try {
-            Path csvModified = Paths.get( resources + File.separator + "copia_" + nameOfFile);
             csvModified.toFile().createNewFile();
             File file = new File(csvModified.toString());
             FileWriter fw = new FileWriter(file);

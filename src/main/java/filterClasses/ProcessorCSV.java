@@ -1,3 +1,5 @@
+package filterClasses;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -6,6 +8,7 @@ public class ProcessorCSV {
     public String processCSV(Path path, String city) {
         switch (path.getName(4).toString()) {
             case "calidad_aire_datos_mes.csv":
+                // este csv contiene 
                 return processCADM(path, city);
             // break;
             case "calidad_aire_datos_meteo_mes.csv":
