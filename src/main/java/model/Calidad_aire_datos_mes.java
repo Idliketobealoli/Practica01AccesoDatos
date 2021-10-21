@@ -15,10 +15,10 @@ public class Calidad_aire_datos_mes {
     private int municipio;
     private int estacion;
     private int magnitud;
-    private int punto_muestreo;
+    private String punto_muestreo;
     private int ano;
     private int mes;
     private int dia;
-    private List<Integer> listH = new ArrayList<>(24);
+    private List<Double> listH = new ArrayList<>(24);
     private List<Character> listV = new ArrayList<>(24);
 }

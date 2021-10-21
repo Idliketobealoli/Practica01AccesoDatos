@@ -13,7 +13,7 @@ public class City {
     private String name;
     private String measurementStartDate; // fecha primera medicion
     private String measurementEndDate; // fecha ultima medicion
-    private ArrayList<Station> associatedStationList;
+    private ArrayList<String> associatedStationList;
     private ArrayList<Measurements> measurements;
 }
 

@@ -4,17 +4,15 @@ import model.*;
 import utils.Util;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProcessData {
-    List<Calidad_aire_datos_mes> cadm;
-    List<Calidad_aire_datos_meteo_mes> cadmm;
-    List<Calidad_aire_estaciones> cae;
-    List<Calidad_aire_zonas> caz;
-    Map<String, Integer> codeCity;
+    private List<Calidad_aire_datos_mes> cadm;
+    private List<Calidad_aire_datos_meteo_mes> cadmm;
+    private List<Calidad_aire_estaciones> cae;
+    private List<Calidad_aire_zonas> caz;
+    private Map<String, Integer> codeCity;
 
     private Map<String, Integer> setValues() {
         Map<String, Integer> map = new HashMap<String, Integer>(24);
@@ -47,22 +45,51 @@ public class ProcessData {
 
     public ProcessData(String city) {
         try {
+            City desiredCity = new City();
             cadm = Util.getCalidad_aire_datos_mes();
             cadmm = Util.getCalidad_aire_datos_meteo_mes();
             cae = Util.getCalidad_aire_estaciones();
             caz = Util.getCalidad_aire_zonas();
             codeCity = setValues();
             filter(city);
-            // continuar metiendo filtros aqui.
+            desiredCity.setName(city);
+            cadm.forEach(System.out::println);
+            System.out.println("");
+            cadmm.forEach(System.out::println);
+            System.out.println("");
+            cae.forEach(System.out::println);
+            System.out.println("");
+            caz.forEach(System.out::println);
+            // desiredCity.setMeasurements(processMeasurements());
+            // desiredCity.setMeasurementStartDate(getOldestMeasure());
+            // desiredCity.setMeasurementEndDate(getNewestMeasure());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /*
+    private ArrayList<Measurements> processMeasurements() {
+        cadm.stream().filter()
+    }
+    */
+    /*
+    private String getNewestMeasure() {
+        String mostRecentCADM = cadm.stream().
+        String mostRecentCADMM = cadmm.stream()
+        return
+    }
+
+    private String getOldestMeasure() {
+        return
+    }
+     */
+
     public void filter(String cityName) {
         // con esto dejaremos solo las tuplas correspondientes a la ciudad que introduzcamos
         int cityCode = cityNameToMunicipio(cityName);
         // esto filtra las listas y las actualiza
+        // List<Calidad_aire_datos_mes> resultCADM = cadm.stream().filter(x -> x.getMunicipio() == cityCode).collect(Collectors.toList());
         cadm = cadm.stream().filter(x -> x.getMunicipio() == cityCode).collect(Collectors.toList());
         cadmm = cadmm.stream().filter(x -> x.getMunicipio() == cityCode).collect(Collectors.toList());
         cae = cae.stream().filter(x -> x.getEstacion_municipio().equalsIgnoreCase(cityName)).collect(Collectors.toList());

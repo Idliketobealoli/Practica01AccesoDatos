@@ -13,6 +13,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
+
+import static java.lang.Integer.parseInt;
 
 public class Util {
     // creamos un metodo que lea el csv "calidad_aire_datos_mes.csv" y lo convierta en un ArrayList de objetos pojo.Calidad_aire_datos_mes
@@ -30,19 +33,30 @@ public class Util {
             StringTokenizer st = new StringTokenizer(lines.get(i), ";");
             Calidad_aire_datos_mes cadm = new Calidad_aire_datos_mes();
             // metemos la tupla de cada columna del csv dentro del objeto cadm (o las tuplas que necesitemos, que de momento tiene pinta de que son todas)
-            cadm.setProvincia(Integer.parseInt(st.nextToken()));
-            cadm.setMunicipio(Integer.parseInt(st.nextToken()));
-            cadm.setEstacion(Integer.parseInt(st.nextToken()));
-            cadm.setMagnitud(Integer.parseInt(st.nextToken()));
-            cadm.setPunto_muestreo(Integer.parseInt(st.nextToken()));
-            cadm.setAno(Integer.parseInt(st.nextToken()));
-            cadm.setMes(Integer.parseInt(st.nextToken()));
-            cadm.setDia(Integer.parseInt(st.nextToken()));
+            cadm.setProvincia(parseInt(st.nextToken()));
+            cadm.setMunicipio(parseInt(st.nextToken()));
+            cadm.setEstacion(parseInt(st.nextToken()));
+            cadm.setMagnitud(parseInt(st.nextToken()));
+            cadm.setPunto_muestreo(st.nextToken());
+            cadm.setAno(parseInt(st.nextToken()));
+            cadm.setMes(parseInt(st.nextToken()));
+            cadm.setDia(parseInt(st.nextToken()));
             while (st.hasMoreTokens()) {
-                // ojo, si queda exactamente un token, se meterá en el bucle y añadirá uno a
-                // listH, pero explotará cuando intente meter uno a listV, pues no quedarían más.
-                cadm.getListH().add(Integer.parseInt(st.nextToken()));
-                cadm.getListV().add(st.nextToken().charAt(0));
+                // para evitar que el programa explote, si el token leido es un caracter (^[a-zA-Z]),
+                // seteará este H de la listH a null y meterá el token en la listV. de lo contrario, procederá normal.
+                // Esto está hecho así porque de lo contrario, metería characters dentro de listH,
+                // lo que reventaría el programa.
+                String token = st.nextToken();
+                if (!token.matches("^[a-zA-Z]")){
+                    // como necesitamos que los decimales esten separados por puntos,
+                    // pero en los csv los separan con comas, simplemente en cada token que sea un valor numerico,
+                    // reemplazamos la coma por un punto si la tiene y luego lo parseamos a double.
+                    cadm.getListH().add(Double.parseDouble(token.replace(',', '.')));
+                    cadm.getListV().add(st.nextToken().charAt(0));
+                } else {
+                    cadm.getListH().add(null);
+                    cadm.getListV().add(token.charAt(0));
+                }
             }
             // una vez seteado todo, lo anadimos a la lista de objetos cadm
             cadmList.add(cadm);
@@ -59,21 +73,37 @@ public class Util {
         for (int i = 1; i < lines.size(); i++) {
             StringTokenizer st = new StringTokenizer(lines.get(i), ";");
             Calidad_aire_datos_meteo_mes cadmm = new Calidad_aire_datos_meteo_mes();
-            cadmm.setProvincia(Integer.parseInt(st.nextToken()));
-            cadmm.setMunicipio(Integer.parseInt(st.nextToken()));
-            cadmm.setEstacion(Integer.parseInt(st.nextToken()));
-            cadmm.setMagnitud(Integer.parseInt(st.nextToken()));
-            cadmm.setPunto_muestreo(Integer.parseInt(st.nextToken()));
-            cadmm.setAno(Integer.parseInt(st.nextToken()));
-            cadmm.setMes(Integer.parseInt(st.nextToken()));
-            cadmm.setDia(Integer.parseInt(st.nextToken()));
+            cadmm.setProvincia(parseInt(st.nextToken()));
+            cadmm.setMunicipio(parseInt(st.nextToken()));
+            cadmm.setEstacion(parseInt(st.nextToken()));
+            cadmm.setMagnitud(parseInt(st.nextToken()));
+            cadmm.setPunto_muestreo(st.nextToken());
+            cadmm.setAno(parseInt(st.nextToken()));
+            cadmm.setMes(parseInt(st.nextToken()));
+            cadmm.setDia(parseInt(st.nextToken()));
             while (st.hasMoreTokens()) {
-                cadmm.getListH().add(Integer.parseInt(st.nextToken()));
-                cadmm.getListV().add(st.nextToken().charAt(0));
+                String token = st.nextToken();
+                if (!token.matches("^[a-zA-Z]")){
+                    cadmm.getListH().add(Double.parseDouble(token.replace(',', '.')));
+                    cadmm.getListV().add(st.nextToken().charAt(0));
+                } else {
+                    cadmm.getListH().add(null);
+                    cadmm.getListV().add(token.charAt(0));
+                }
             }
             cadmmList.add(cadmm);
         }
         return cadmmList;
+    }
+
+    private static String noDoubleDelimiter(String x) {
+        while (x.contains(";;") || x.endsWith(";")) {
+            x = Pattern.compile(";{2}").matcher(x).replaceAll(";" + null + ";");
+            if (x.endsWith(";")) {
+                x = Pattern.compile(";$").matcher(x).replaceAll(";" + null);
+            }
+        }
+        return x;
     }
 
     public static List<Calidad_aire_estaciones> getCalidad_aire_estaciones() throws IOException {
@@ -82,21 +112,22 @@ public class Util {
         final List<String> lines = Files.readAllLines(csv);
         List<Calidad_aire_estaciones> caeList = new ArrayList<>();
         for (int i = 1; i < lines.size(); i++) {
-            StringTokenizer st = new StringTokenizer(lines.get(i), ";");
+            String lineNoDD = noDoubleDelimiter(lines.get(i));
+            StringTokenizer st = new StringTokenizer(lineNoDD, ";");
             Calidad_aire_estaciones cae = new Calidad_aire_estaciones();
-            cae.setEstacion_codigo(Integer.parseInt(st.nextToken()));
+            cae.setEstacion_codigo(parseInt(st.nextToken()));
             cae.setZona_calidad_aire_descripcion(st.nextToken());
             cae.setEstacion_municipio(st.nextToken());
             cae.setEstacion_fecha_alta(st.nextToken());
             cae.setEstacion_tipo_area(st.nextToken());
             cae.setEstacion_tipo_estacion(st.nextToken());
-            cae.setEstacion_subarea_rural(st.nextToken());
+            cae.setEstacion_subarea_rural(st.nextElement().toString());
             cae.setEstacion_direccion_postal(st.nextToken());
-            cae.setEstacion_coord_UTM_ETRS89_x(Integer.parseInt(st.nextToken()));
-            cae.setEstacion_coord_UTM_ETRS89_y(Integer.parseInt(st.nextToken()));
+            cae.setEstacion_coord_UTM_ETRS89_x(parseInt(st.nextToken()));
+            cae.setEstacion_coord_UTM_ETRS89_y(parseInt(st.nextToken()));
             cae.setEstacion_coord_longitud(st.nextToken());
             cae.setEstacion_coord_latitud(st.nextToken());
-            cae.setEstacion_altitud(Integer.parseInt(st.nextToken()));
+            cae.setEstacion_altitud(parseInt(st.nextToken()));
             cae.setEstacion_analizador_NO(st.nextToken());
             cae.setEstacion_analizador_NO2(st.nextToken());
             cae.setEstacion_analizador_PM10(st.nextToken());
@@ -122,7 +153,7 @@ public class Util {
         for (int i = 1; i < lines.size(); i++) {
             StringTokenizer st = new StringTokenizer(lines.get(i), ";");
             Calidad_aire_zonas caz = new Calidad_aire_zonas();
-            caz.setZona_calidad_aire_codigo(Integer.parseInt(st.nextToken()));
+            caz.setZona_calidad_aire_codigo(parseInt(st.nextToken()));
             caz.setZona_calidad_aire_descripcion(st.nextToken());
             caz.setZona_calidad_aire_municipio(st.nextToken());
             cazList.add(caz);

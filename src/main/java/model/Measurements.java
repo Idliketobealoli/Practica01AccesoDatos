@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import org.jfree.chart.JFreeChart;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -16,10 +15,10 @@ public class Measurements {
     private int type;
     private double averageValue;
     private JFreeChart chart;
-    private Date momentMinValue;
+    private String momentMinValue;
     private double minValue;
-    private Date momentMaxValue;
+    private String momentMaxValue;
     private double maxValue;
-    private List<Date> daysOnWhichRained = new ArrayList<>();
+    private List<String> daysOnWhichRained = new ArrayList<>();
     private List<Double> rainMeasurements = new ArrayList<>();
 }
