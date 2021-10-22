@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Data
 @AllArgsConstructor
@@ -19,6 +18,9 @@ public class Calidad_aire_datos {
     private int ano;
     private int mes;
     private int dia;
-    private List<Double> listH = new ArrayList<>(24);
-    private List<Character> listV = new ArrayList<>(24);
+    private Map<Integer, Double> listH = new HashMap<>(24);
+    private Map<Integer, Character> listV = new HashMap<>(24);
+    private Set<Integer> hour = new HashSet<>(24);
+    private String magnitudeName;
+    private String measurementUnitName;
 }

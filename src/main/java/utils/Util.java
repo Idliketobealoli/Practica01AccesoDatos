@@ -1,5 +1,6 @@
 package utils;
 
+import filterClasses.ProcessData;
 import model.Calidad_aire_datos;
 import model.Calidad_aire_estaciones;
 import model.Calidad_aire_zonas;
@@ -35,11 +36,15 @@ public class Util {
             cad.setProvincia(parseInt(st.nextToken()));
             cad.setMunicipio(parseInt(st.nextToken()));
             cad.setEstacion(parseInt(st.nextToken()));
-            cad.setMagnitud(parseInt(st.nextToken()));
+            int magCode = parseInt(st.nextToken());
+            cad.setMagnitud(magCode);
+            cad.setMagnitudeName(ProcessData.codeMagnitude.get(magCode));
+            cad.setMeasurementUnitName(ProcessData.codeMeasurementUnit.get(magCode));
             cad.setPunto_muestreo(st.nextToken());
             cad.setAno(parseInt(st.nextToken()));
             cad.setMes(parseInt(st.nextToken()));
             cad.setDia(parseInt(st.nextToken()));
+            int count = 1;
             while (st.hasMoreTokens()) {
                 // para evitar que el programa explote, si el token leido es un caracter (^[a-zA-Z]),
                 // seteará este H de la listH a null y meterá el token en la listV. de lo contrario, procederá normal.
@@ -50,12 +55,14 @@ public class Util {
                     // como necesitamos que los decimales estén separados por puntos,
                     // pero en los csv los separan con comas, simplemente en cada token que sea un valor numérico,
                     // reemplazamos la coma por un punto si la tiene y luego lo parseamos a double.
-                    cad.getListH().add(Double.parseDouble(token.replace(',', '.')));
-                    cad.getListV().add(st.nextToken().charAt(0));
+                    cad.getListH().put(count, Double.parseDouble(token.replace(',', '.')));
+                    cad.getListV().put(count, st.nextToken().charAt(0));
                 } else {
-                    cad.getListH().add(null);
-                    cad.getListV().add(token.charAt(0));
+                    cad.getListH().put(count, null);
+                    cad.getListV().put(count, token.charAt(0));
                 }
+                cad.getHour().add(count);
+                count++;
             }
             // una vez seteado todo, lo añadimos a la lista de objetos cad
             cadList.add(cad);

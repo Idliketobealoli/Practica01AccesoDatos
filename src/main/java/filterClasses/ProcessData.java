@@ -7,16 +7,17 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 public class ProcessData {
     private List<Calidad_aire_datos> cadm;
     private List<Calidad_aire_datos> cadmm;
     private List<Calidad_aire_estaciones> cae;
     private List<Calidad_aire_zonas> caz;
     private Map<String, Integer> codeCity;
-    private Map<Integer, String> codeMagnitude;
-    private Map<Integer, String> codeMeasurementUnit;
-    private Map<Integer, Integer> index_to_codes;
-    
+    public static Map<Integer, String> codeMagnitude;
+    public static Map<Integer, String> codeMeasurementUnit;
+    public static Map<Integer, Integer> index_to_codes;
+
     private Map<Integer, Integer> setValuesIndexToCodes() {
         Map<Integer, Integer> map = new HashMap<>(19);
         map.put(0, 81);
@@ -131,7 +132,7 @@ public class ProcessData {
             cae.forEach(System.out::println);
             System.out.println("");
             caz.forEach(System.out::println);
-            desiredCity.setMeasurements(processMeasurements());
+            // desiredCity.setMeasurements(());
             // desiredCity.setMeasurementStartDate(getOldestMeasure());
             // desiredCity.setMeasurementEndDate(getNewestMeasure());
         } catch (IOException e) {
@@ -140,39 +141,14 @@ public class ProcessData {
     }
 
     private void setUpMapsAndLists() throws IOException {
+        index_to_codes = setValuesIndexToCodes();
+        codeMagnitude = setValuesCodeMagnitude();
+        codeMeasurementUnit = setValuesCodeMeasureUnit();
         cadm = Util.getCalidad_aire_datos("calidad_aire_datos_mes.csv");
         cadmm = Util.getCalidad_aire_datos("calidad_aire_datos_meteo_mes.csv");
         cae = Util.getCalidad_aire_estaciones();
         caz = Util.getCalidad_aire_zonas();
         codeCity = setValuesCodeCity();
-        index_to_codes = setValuesIndexToCodes();
-        codeMagnitude = setValuesCodeMagnitude();
-        codeMeasurementUnit = setValuesCodeMeasureUnit();
-    }
-
-    private ArrayList<Measurements> processMeasurements() {
-        ArrayList<Measurements> result = new ArrayList<>();
-        for (int i = 0; i < index_to_codes.size(); i++) {
-            // pasamos nuestro contador real a una variable para poder usarla dentro de la expresión lambda.
-            int index = index_to_codes.get(i);
-            List<Calidad_aire_datos> temporalList = new ArrayList<>();
-            // leemos una lista u otra en funcion del valor de index
-            if (index >= 81 && index <= 89) {
-                temporalList = cadmm.stream().filter(x -> x.getMagnitud() == index).collect(Collectors.toList());
-            } else {
-                temporalList = cadm.stream().filter(x -> x.getMagnitud() == index).collect(Collectors.toList());
-            }
-            // creamos el objeto measurements que queremos meter en la posicion i de la lista de measurements.
-            for (Calidad_aire_datos cad: temporalList) {
-                Measurements m = new Measurements();
-                m.setType(cad.getMagnitud());
-                m.setTypeName(codeMagnitude.get(index));
-                m.setMeasurementUnitName(codeMeasurementUnit.get(index));
-                // etc etc etc
-                result.add(m);
-            }
-        }
-        return result;
     }
 
     /*
