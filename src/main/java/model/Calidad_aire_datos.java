@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Calidad_aire_datos_mes {
+@NoArgsConstructor
+public class Calidad_aire_datos {
     private int provincia;
     private int municipio;
     private int estacion;

@@ -1,7 +1,6 @@
 package utils;
 
-import model.Calidad_aire_datos_mes;
-import model.Calidad_aire_datos_meteo_mes;
+import model.Calidad_aire_datos;
 import model.Calidad_aire_estaciones;
 import model.Calidad_aire_zonas;
 
@@ -19,28 +18,28 @@ import static java.lang.Integer.parseInt;
 
 public class Util {
     // creamos un metodo que lea el csv "calidad_aire_datos_mes.csv" y lo convierta en un ArrayList de objetos pojo.Calidad_aire_datos_mes
-    public static List<Calidad_aire_datos_mes> getCalidad_aire_datos_mes() throws IOException {
+    public static List<Calidad_aire_datos> getCalidad_aire_datos(String csvName) throws IOException {
         // cogemos el working directory
         String WORKING_DIRECTORY = System.getProperty("user.dir");
-        // y creamos un objeto Path con el path al csv "calidad_aire_datos_mes.csv"
+        // y creamos un objeto Path con el path al csv que le pasemos
         Path csv = Paths.get(WORKING_DIRECTORY + File.separator + "src" + File.separator +
-                "main" + File.separator + "resources" + File.separator + "calidad_aire_datos_mes.csv");
+                "main" + File.separator + "resources" + File.separator + csvName);
         final List<String> lines = Files.readAllLines(csv);
-        List<Calidad_aire_datos_mes> cadmList = new ArrayList<>();
+        List<Calidad_aire_datos> cadList = new ArrayList<>();
         // esto lo hacemos con un for normal porque necesitamos el indice para el lines.get(indice)
         // empezamos con i = 1 para que no coja la primera linea del csv, ya que esa no nos interesa
         for(int i = 1; i < lines.size(); i++) {
             StringTokenizer st = new StringTokenizer(lines.get(i), ";");
-            Calidad_aire_datos_mes cadm = new Calidad_aire_datos_mes();
-            // metemos la tupla de cada columna del csv dentro del objeto cadm (o las tuplas que necesitemos, que de momento tiene pinta de que son todas)
-            cadm.setProvincia(parseInt(st.nextToken()));
-            cadm.setMunicipio(parseInt(st.nextToken()));
-            cadm.setEstacion(parseInt(st.nextToken()));
-            cadm.setMagnitud(parseInt(st.nextToken()));
-            cadm.setPunto_muestreo(st.nextToken());
-            cadm.setAno(parseInt(st.nextToken()));
-            cadm.setMes(parseInt(st.nextToken()));
-            cadm.setDia(parseInt(st.nextToken()));
+            Calidad_aire_datos cad = new Calidad_aire_datos();
+            // metemos la tupla de cada columna del csv dentro del objeto cad (o las tuplas que necesitemos, que de momento tiene pinta de que son todas)
+            cad.setProvincia(parseInt(st.nextToken()));
+            cad.setMunicipio(parseInt(st.nextToken()));
+            cad.setEstacion(parseInt(st.nextToken()));
+            cad.setMagnitud(parseInt(st.nextToken()));
+            cad.setPunto_muestreo(st.nextToken());
+            cad.setAno(parseInt(st.nextToken()));
+            cad.setMes(parseInt(st.nextToken()));
+            cad.setDia(parseInt(st.nextToken()));
             while (st.hasMoreTokens()) {
                 // para evitar que el programa explote, si el token leido es un caracter (^[a-zA-Z]),
                 // seteará este H de la listH a null y meterá el token en la listV. de lo contrario, procederá normal.
@@ -48,52 +47,20 @@ public class Util {
                 // lo que reventaría el programa.
                 String token = st.nextToken();
                 if (!token.matches("^[a-zA-Z]")){
-                    // como necesitamos que los decimales esten separados por puntos,
-                    // pero en los csv los separan con comas, simplemente en cada token que sea un valor numerico,
+                    // como necesitamos que los decimales estén separados por puntos,
+                    // pero en los csv los separan con comas, simplemente en cada token que sea un valor numérico,
                     // reemplazamos la coma por un punto si la tiene y luego lo parseamos a double.
-                    cadm.getListH().add(Double.parseDouble(token.replace(',', '.')));
-                    cadm.getListV().add(st.nextToken().charAt(0));
+                    cad.getListH().add(Double.parseDouble(token.replace(',', '.')));
+                    cad.getListV().add(st.nextToken().charAt(0));
                 } else {
-                    cadm.getListH().add(null);
-                    cadm.getListV().add(token.charAt(0));
+                    cad.getListH().add(null);
+                    cad.getListV().add(token.charAt(0));
                 }
             }
-            // una vez seteado todo, lo anadimos a la lista de objetos cadm
-            cadmList.add(cadm);
+            // una vez seteado todo, lo añadimos a la lista de objetos cad
+            cadList.add(cad);
         }
-        return cadmList;
-    }
-
-    public static List<Calidad_aire_datos_meteo_mes> getCalidad_aire_datos_meteo_mes() throws IOException {
-        // esto es lo mismo que en el anterior metodo, pero sin usar la variable "WORKING DIRECTORY", pero es menos legible de esta forma creo yo
-        Path csv = Paths.get(System.getProperty("user.dir") + File.separator + "src" + File.separator +
-                "main" + File.separator + "resources" + File.separator + "calidad_aire_datos_meteo_mes.csv");
-        final List<String> lines = Files.readAllLines(csv);
-        List<Calidad_aire_datos_meteo_mes> cadmmList = new ArrayList<>();
-        for (int i = 1; i < lines.size(); i++) {
-            StringTokenizer st = new StringTokenizer(lines.get(i), ";");
-            Calidad_aire_datos_meteo_mes cadmm = new Calidad_aire_datos_meteo_mes();
-            cadmm.setProvincia(parseInt(st.nextToken()));
-            cadmm.setMunicipio(parseInt(st.nextToken()));
-            cadmm.setEstacion(parseInt(st.nextToken()));
-            cadmm.setMagnitud(parseInt(st.nextToken()));
-            cadmm.setPunto_muestreo(st.nextToken());
-            cadmm.setAno(parseInt(st.nextToken()));
-            cadmm.setMes(parseInt(st.nextToken()));
-            cadmm.setDia(parseInt(st.nextToken()));
-            while (st.hasMoreTokens()) {
-                String token = st.nextToken();
-                if (!token.matches("^[a-zA-Z]")){
-                    cadmm.getListH().add(Double.parseDouble(token.replace(',', '.')));
-                    cadmm.getListV().add(st.nextToken().charAt(0));
-                } else {
-                    cadmm.getListH().add(null);
-                    cadmm.getListV().add(token.charAt(0));
-                }
-            }
-            cadmmList.add(cadmm);
-        }
-        return cadmmList;
+        return cadList;
     }
 
     private static String noDoubleDelimiter(String x) {
