@@ -1,6 +1,7 @@
 package filterClasses;
 
 import model.*;
+import org.jfree.chart.JFreeChart;
 import utils.Util;
 
 import java.io.IOException;
@@ -144,7 +145,42 @@ public class ProcessData {
     }
 
     private void setUpMeasurementList() {
+        Measurement measurement = new Measurement();
+        setMeasurement(measurement);
+        ArrayList<Measurement> contMeasurementList = new ArrayList<>();
+        contMeasurementList.add(measurement);
     }
+    private void setMeasurement(Measurement measurement){
+        //primary//measurement.setMagnitude(giveMeMagnitude());
+        //primary//measurement.setMagnitudeName(giveMeMagnitudeName());
+        //primary//measurement.setMeasurementUnitName(giveMeMeasurementUnitName());
+        //measurement.setAverageValue(giveMeAverageValue);
+        //primary//measurement.setChart(giveMeChart());
+        //measurement.setMomentMinValue(giveMeMomentMinValue ());
+        //measurement.setMinValue(giveMeMinValue());
+        //measurement.setMomentMaxValue(giveMeMomentMaxValue());
+        //measurement.setMaxValue(giveMeMaxValue());
+        //measurement.setData(giveMeData());
+    }
+
+    //estos métodos hay que cambiarlos, están así para hacer un commit sin errores
+    private int giveMeMagnitude(int magnitud) {
+        return magnitud;
+    }
+
+    private String giveMeMagnitudeName(String magnitudname) {
+        return magnitudname;
+    }
+
+    private String giveMeMeasurementUnitName(String measurementunit) {
+        return measurementunit;
+    }
+
+    private JFreeChart giveMeChart(JFreeChart chart) {
+        return chart;
+    }
+//--------------------------------------------------------------
+
 
     private void setUpCAD() {
     }

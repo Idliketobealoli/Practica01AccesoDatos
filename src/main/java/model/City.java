@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class City {
     private String name;
     private Date firstMeasurementDate; // fecha primera medicion registrada
