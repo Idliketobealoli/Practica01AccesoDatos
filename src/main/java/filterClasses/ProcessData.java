@@ -132,22 +132,90 @@ public class ProcessData {
             cae.forEach(System.out::println);
             System.out.println("");
             caz.forEach(System.out::println);
-            setUpCAD();
-            setUpMeasurementList();
-            setUpCity();
+            System.out.println("");
+            System.out.println("");
+            System.out.println("");
+            System.out.println("");
+            List<Measurement> measurementList = new ArrayList<>(); // = setUpMeasurementList(); BORRAR EL "NEW ARRAYLIST"
+            setUpCity(desiredCity, measurementList);
+            System.out.println(desiredCity);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void setUpCity() {
+    private void setUpCity(City city, List<Measurement> measureList) {
+        city.setMeteoMeasurements(giveMeMeteoMeasurements(measureList));
+        city.setContaminationMeasurements(giveMeContaminationMeasurements(measureList));
+        city.setFirstMeasurementDate(giveMeFirstDate(city));
+        city.setLastMeasurementDate(giveMeLastDate(city));
+        city.setAssociatedStationList(giveMeStations());
     }
 
-    private void setUpMeasurementList() {
+    private ArrayList<Measurement> giveMeContaminationMeasurements(List<Measurement> measureList) {
+        ArrayList<Measurement> contaminationMeasurements = new ArrayList<>();
+        int counter = 0;
+        int code;
+        while (counter < index_to_codes.size()) {
+            code = index_to_codes.get(counter);
+            if (!(code >= 81 && code <= 89)) {
+                int finalCode = code;
+                List<Measurement> m = measureList.stream().filter(x -> x.getMagnitude() == finalCode).collect(Collectors.toList());
+                contaminationMeasurements.addAll(m);
+            }
+            counter++;
+        }
+        return contaminationMeasurements;
     }
 
-    private void setUpCAD() {
+    private ArrayList<Measurement> giveMeMeteoMeasurements(List<Measurement> measureList) {
+        ArrayList<Measurement> meteoMeasurements = new ArrayList<>();
+        int counter = 0;
+        int code;
+        while (counter < index_to_codes.size()) {
+            code = index_to_codes.get(counter);
+            if (code >= 81 && code <= 89) {
+                int finalCode = code;
+                List<Measurement> m = measureList.stream().filter(x -> x.getMagnitude() == finalCode).collect(Collectors.toList());
+                meteoMeasurements.addAll(m);
+            }
+            counter++;
+        }
+        return meteoMeasurements;
     }
+
+    private ArrayList<String> giveMeStations() {
+        ArrayList<String> stationList = new ArrayList<>();
+        cae.forEach(x -> stationList.add(x.getEstacion_direccion_postal()));
+        return stationList;
+    }
+
+    private Date giveMeFirstDate(City city) {
+        List<Date> dateList = new ArrayList<>();
+        for (Measurement measure: city.getMeteoMeasurements()) {
+            dateList.add(measure.getData().stream().min(Comparator.comparing(Calidad_aire_datos::getFecha_medicion)).get().getFecha_medicion());
+        }
+        for (Measurement measure: city.getContaminationMeasurements()) {
+            dateList.add(measure.getData().stream().min(Comparator.comparing(Calidad_aire_datos::getFecha_medicion)).get().getFecha_medicion());
+        }
+        Optional<Date> result = dateList.stream().min(Comparator.comparing(x -> x));
+        return result.orElse(null);
+    }
+
+    private Date giveMeLastDate(City city) {
+        List<Date> dateList = new ArrayList<>();
+        for (Measurement measure: city.getMeteoMeasurements()) {
+            dateList.add(measure.getData().stream().max(Comparator.comparing(Calidad_aire_datos::getFecha_medicion)).get().getFecha_medicion());
+        }
+        for (Measurement measure: city.getContaminationMeasurements()) {
+            dateList.add(measure.getData().stream().max(Comparator.comparing(Calidad_aire_datos::getFecha_medicion)).get().getFecha_medicion());
+        }
+        Optional<Date> result = dateList.stream().max(Comparator.comparing(x -> x));
+        return result.orElse(null);
+    }
+
+    // private List<Measurement> setUpMeasurementList() {
+    // }
 
     private void setUpMapsAndLists() throws IOException {
         index_to_codes = setValuesIndexToCodes();
@@ -160,23 +228,10 @@ public class ProcessData {
         codeCity = setValuesCodeCity();
     }
 
-    /*
-    private String getNewestMeasure() {
-        String mostRecentCADM = cadm.stream().
-        String mostRecentCADMM = cadmm.stream()
-        return
-    }
-
-    private String getOldestMeasure() {
-        return
-    }
-     */
-
     public void filter(String cityName) {
-        // con esto dejaremos solo las tuplas correspondientes a la ciudad que introduzcamos
+        // Con esto dejaremos solo las tuplas correspondientes a la ciudad que introduzcamos.
         int cityCode = cityNameToMunicipio(cityName);
-        // esto filtra las listas y las actualiza
-        // List<Calidad_aire_datos_mes> resultCADM = cadm.stream().filter(x -> x.getMunicipio() == cityCode).collect(Collectors.toList());
+        // Esto filtra las listas y las actualiza.
         cadm = cadm.stream().filter(x -> x.getMunicipio() == cityCode).collect(Collectors.toList());
         cadmm = cadmm.stream().filter(x -> x.getMunicipio() == cityCode).collect(Collectors.toList());
         cae = cae.stream().filter(x -> x.getEstacion_municipio().equalsIgnoreCase(cityName)).collect(Collectors.toList());

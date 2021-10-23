@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+
+// DEPRECATED
 public class ProcessorCSV {
     public String processCSV(Path path, String city) {
         switch (path.getName(4).toString()) {

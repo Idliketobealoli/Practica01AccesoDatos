@@ -15,13 +15,8 @@ public class Calidad_aire_datos {
     private int estacion;
     private int magnitud;
     private String punto_muestreo;
-    private int ano;
-    private int mes;
-    private int dia;
-    private double maxValue;
-    private double minValue;
-    private double averageValue;
-    private Map<Integer, Double> listH = new HashMap<>(24);
-    private Map<Integer, Character> listV = new HashMap<>(24);
+    private Date fecha_medicion;
+    private List<Double> listH = new ArrayList<>(24);
+    private List <Character> listV = new ArrayList<>(24);
     private Set<Integer> hour = new HashSet<>(24);
 }

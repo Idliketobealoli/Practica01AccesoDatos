@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+// DEPRECATED
 public class LectorCSV {
     Path thisPath = Paths.get(".");
     Path resources = Paths.get(thisPath + File.separator + "src" + File.separator + "main" + File.separator + "resources");

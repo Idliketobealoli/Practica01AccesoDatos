@@ -1,6 +1,5 @@
 package utils;
 
-import filterClasses.ProcessData;
 import model.Calidad_aire_datos;
 import model.Calidad_aire_estaciones;
 import model.Calidad_aire_zonas;
@@ -10,61 +9,57 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static java.lang.Integer.parseInt;
 
 public class Util {
-    // creamos un metodo que lea el csv "calidad_aire_datos_mes.csv" y lo convierta en un ArrayList de objetos pojo.Calidad_aire_datos_mes
+    // Creamos un método que lea los csv "calidad_aire_datos(_meteo)_mes.csv" y los convierta en un ArrayList de objetos pojo Calidad_aire_datos.
     public static List<Calidad_aire_datos> getCalidad_aire_datos(String csvName) throws IOException {
-        // cogemos el working directory
+        // Cogemos el working directory.
         String WORKING_DIRECTORY = System.getProperty("user.dir");
-        // y creamos un objeto Path con el path al csv que le pasemos
+        // Y creamos un objeto Path con el path al csv que le pasemos.
         Path csv = Paths.get(WORKING_DIRECTORY + File.separator + "src" + File.separator +
                 "main" + File.separator + "resources" + File.separator + csvName);
         final List<String> lines = Files.readAllLines(csv);
         List<Calidad_aire_datos> cadList = new ArrayList<>();
-        // esto lo hacemos con un for normal porque necesitamos el indice para el lines.get(indice)
-        // empezamos con i = 1 para que no coja la primera linea del csv, ya que esa no nos interesa
+        // Esto lo hacemos con un for normal porque necesitamos el índice para el lines.get(indice).
+        // Empezamos con i = 1 para que no coja la primera línea del csv, ya que esa no nos interesa.
         for(int i = 1; i < lines.size(); i++) {
             StringTokenizer st = new StringTokenizer(lines.get(i), ";");
             Calidad_aire_datos cad = new Calidad_aire_datos();
-            // metemos la tupla de cada columna del csv dentro del objeto cad (o las tuplas que necesitemos, que de momento tiene pinta de que son todas)
+            // Metemos la tupla de cada columna del csv dentro del objeto cad (o las tuplas que necesitemos, que de momento tiene pinta de que son todas).
             cad.setProvincia(parseInt(st.nextToken()));
             cad.setMunicipio(parseInt(st.nextToken()));
             cad.setEstacion(parseInt(st.nextToken()));
-            int magCode = parseInt(st.nextToken());
-            cad.setMagnitud(magCode);
-            // cad.setMagnitudeName(ProcessData.codeMagnitude.get(magCode));
-            // cad.setMeasurementUnitName(ProcessData.codeMeasurementUnit.get(magCode));
+            cad.setMagnitud(parseInt(st.nextToken()));
             cad.setPunto_muestreo(st.nextToken());
-            cad.setAno(parseInt(st.nextToken()));
-            cad.setMes(parseInt(st.nextToken()));
-            cad.setDia(parseInt(st.nextToken()));
+            int ano = parseInt(st.nextToken());
+            int mes = parseInt(st.nextToken());
+            int dia = parseInt(st.nextToken());
+            Date date = new Date(ano, mes, dia);
+            cad.setFecha_medicion(date);
             int count = 1;
             while (st.hasMoreTokens()) {
-                // para evitar que el programa explote, si el token leido es un caracter (^[a-zA-Z]),
-                // seteará este H de la listH a null y meterá el token en la listV. de lo contrario, procederá normal.
-                // Esto está hecho así porque de lo contrario, metería characters dentro de listH,
-                // lo que reventaría el programa.
+                // Para evitar que el programa explote, si el token leído es un character (^[a-zA-Z]),
+                // seteará este H de la listH a null y meterá el token en la listV. De lo contrario, procederá normal.
+                // Esto está hecho así porque de lo contrario, metería characters dentro de listH, lo que reventaría el programa.
                 String token = st.nextToken();
-                if (!token.matches("^[a-zA-Z]")){
-                    // como necesitamos que los decimales estén separados por puntos,
+                if (!token.matches("^[a-zA-Z]")){ // otra forma de hacer esto sería "!(^[0-9])" y así sabríamos que no es número.
+                    // Como necesitamos que los decimales estén separados por puntos,
                     // pero en los csv los separan con comas, simplemente en cada token que sea un valor numérico,
                     // reemplazamos la coma por un punto si la tiene y luego lo parseamos a double.
-                    cad.getListH().put(count, Double.parseDouble(token.replace(',', '.')));
-                    cad.getListV().put(count, st.nextToken().charAt(0));
+                    cad.getListH().add(Double.parseDouble(token.replace(',', '.')));
+                    cad.getListV().add(st.nextToken().charAt(0));
                 } else {
-                    cad.getListH().put(count, null);
-                    cad.getListV().put(count, token.charAt(0));
+                    cad.getListH().add(null);
+                    cad.getListV().add(token.charAt(0));
                 }
                 cad.getHour().add(count);
                 count++;
             }
-            // una vez seteado todo, lo añadimos a la lista de objetos cad
+            // Una vez esto ha sido seteado, lo añadimos a la lista de objetos cad.
             cadList.add(cad);
         }
         return cadList;
