@@ -38,8 +38,8 @@ public class Util {
             cad.setEstacion(parseInt(st.nextToken()));
             int magCode = parseInt(st.nextToken());
             cad.setMagnitud(magCode);
-            cad.setMagnitudeName(ProcessData.codeMagnitude.get(magCode));
-            cad.setMeasurementUnitName(ProcessData.codeMeasurementUnit.get(magCode));
+            // cad.setMagnitudeName(ProcessData.codeMagnitude.get(magCode));
+            // cad.setMeasurementUnitName(ProcessData.codeMeasurementUnit.get(magCode));
             cad.setPunto_muestreo(st.nextToken());
             cad.setAno(parseInt(st.nextToken()));
             cad.setMes(parseInt(st.nextToken()));

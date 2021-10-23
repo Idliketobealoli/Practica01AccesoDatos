@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.jfree.chart.JFreeChart;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -13,17 +14,10 @@ import java.util.List;
 @AllArgsConstructor
 public class City {
     private String name;
-    private String measurementStartDate; // fecha primera medicion registrada
-    private String measurementEndDate; // fecha ultima medicion registrada
-    private double averageValue;
-    private JFreeChart chart;
-    private String momentMinValue;
-    private double minValue;
-    private String momentMaxValue;
-    private double maxValue;
-    private List<String> daysOnWhichRained;
-    private List<Double> rainMeasurements;
+    private Date firstMeasurementDate; // fecha primera medicion registrada
+    private Date lastMeasurementDate; // fecha ultima medicion registrada
     private ArrayList<String> associatedStationList;
-    private ArrayList<Calidad_aire_datos> measurements;
+    private ArrayList<Measurement> meteoMeasurements;
+    private ArrayList<Measurement> contaminationMeasurements;
 }
 
