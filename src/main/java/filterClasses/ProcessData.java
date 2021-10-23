@@ -7,16 +7,16 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 public class ProcessData {
+    public City desiredCity = new City();
     private List<Calidad_aire_datos> cadm;
     private List<Calidad_aire_datos> cadmm;
     private List<Calidad_aire_estaciones> cae;
     private List<Calidad_aire_zonas> caz;
     private Map<String, Integer> codeCity;
-    public static Map<Integer, String> codeMagnitude;
-    public static Map<Integer, String> codeMeasurementUnit;
-    public static Map<Integer, Integer> index_to_codes;
+    public Map<Integer, String> codeMagnitude;
+    public Map<Integer, String> codeMeasurementUnit;
+    public Map<Integer, Integer> index_to_codes;
 
     private Map<Integer, Integer> setValuesIndexToCodes() {
         Map<Integer, Integer> map = new HashMap<>(19);
@@ -72,7 +72,7 @@ public class ProcessData {
         map.put(83, "Temperatura");
         map.put(86, "Humedad relativa");
         map.put(88, "Radiación solar");
-        map.put(89, "precipitación");
+        map.put(89, "Precipitación");
         map.put(1, "Dióxido de azufre");
         map.put(6, "Monóxido de carbono");
         map.put(7, "Monóxido de nitrógeno");
@@ -121,7 +121,6 @@ public class ProcessData {
 
     public ProcessData(String city) {
         try {
-            City desiredCity = new City();
             setUpMapsAndLists();
             filter(city);
             desiredCity.setName(city);

@@ -1,13 +1,9 @@
-import filterClasses.LectorCSV;
+import filterClasses.CreateHTML;
 import filterClasses.ProcessData;
 
 public class App {
     public static void main(String[] args) {
-        // LectorCSV lcsv = new LectorCSV();
-        // lcsv.saveCSV("calidad_aire_datos_mes.csv");
-        // String fileCalidadAireDatosMes = lcsv.buildNewCSVcontent("calidad_aire_datos_mes.csv", "Parla");
-        // lcsv.saveModifiedCSV("calidad_aire_datos_mes.csv", fileCalidadAireDatosMes);
-        // System.out.println(lcsv.readCSV("copia_calidad_aire_datos_mes.csv"));
-        ProcessData pd = new ProcessData("Leganés");
+        ProcessData pd = new ProcessData(args[0]);
+        CreateHTML html = new CreateHTML(pd.desiredCity, args[1]);
     }
 }
