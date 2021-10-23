@@ -132,12 +132,21 @@ public class ProcessData {
             cae.forEach(System.out::println);
             System.out.println("");
             caz.forEach(System.out::println);
-            // desiredCity.setMeasurements(());
-            // desiredCity.setMeasurementStartDate(getOldestMeasure());
-            // desiredCity.setMeasurementEndDate(getNewestMeasure());
+            setUpCAD();
+            setUpMeasurementList();
+            setUpCity();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setUpCity() {
+    }
+
+    private void setUpMeasurementList() {
+    }
+
+    private void setUpCAD() {
     }
 
     private void setUpMapsAndLists() throws IOException {

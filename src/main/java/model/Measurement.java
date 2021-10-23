@@ -15,6 +15,6 @@ public class Measurement {
     private Date momentMaxValue;
     private double maxValue;
     private List<Calidad_aire_datos> data;
-    private List<String> daysOnWhichRained;
+    private List<Date> daysOnWhichRained;
     private List<Double> rainMeasurements;
 }

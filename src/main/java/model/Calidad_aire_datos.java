@@ -18,6 +18,9 @@ public class Calidad_aire_datos {
     private int ano;
     private int mes;
     private int dia;
+    private double maxValue;
+    private double minValue;
+    private double averageValue;
     private Map<Integer, Double> listH = new HashMap<>(24);
     private Map<Integer, Character> listV = new HashMap<>(24);
     private Set<Integer> hour = new HashSet<>(24);
