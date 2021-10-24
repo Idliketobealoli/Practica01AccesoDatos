@@ -32,5 +32,5 @@ public class Calidad_aire_datos {
     private Date fecha_medicion;
     private List<Double> listH = new ArrayList<>(24);
     private List <Character> listV = new ArrayList<>(24);
-    private Set<Integer> hour = new HashSet<>(24);
+    private List<Integer> hour = new ArrayList<>(24);
 }
