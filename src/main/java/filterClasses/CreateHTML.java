@@ -19,12 +19,36 @@ public class CreateHTML {
         generateHTML(city, processedPath);
     }
 
+    /**
+     * A partir de un objeto City y un Path, returnea un Path con el path al directorio que le hayas pasado y
+     * dentro un archivo llamado "[nombre_City]-dd-MM-yyyy.html", donde dd-MM-yyyy es la fecha en la que se llamó
+     * a este método.
+     * @author Daniel Rodríguez Muñoz
+     * @param city City
+     * @param path Path
+     * @return Path
+     * @see model.City
+     * @see java.nio.file.Path
+     */
     private Path processPath(City city, Path path) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDateTime now = LocalDateTime.now();
         return Paths.get(path + File.separator + city.getName() + "-" + dtf.format(now) + ".html");
     }
 
+    /**
+     * Este método generará un html a partir de un Path y una City dados.
+     * Si la ruta ya existe, pedirá por consola si quieres sobreescribir el archivo (borrar el anterior y
+     * guardar este en la ruta dada). De recibir una respuesta afirmativa, lo hará, a no ser que no pueda borrar
+     * dicho archivo, en cuyo caso lo notificará por consola y acabará la ejecución sin modificar ningún archivo.
+     * En el caso de recibir una respuesta negativa, terminará sin modificar nada.
+     * @author Daniel Rodríguez Muñoz
+     * @param city City
+     * @param path Path
+     * @see java.nio.file.Path
+     * @see model.City
+     * @see java.util.Scanner
+     */
     private void generateHTML(City city, Path path) {
         File html = path.toFile();
         if (!html.exists()) {
@@ -52,6 +76,13 @@ public class CreateHTML {
         }
     }
 
+    /**
+     * Este método returneará un String con el html generado a partir del objeto City pasado por parámetro.
+     * @autor Daniel Rodríguez Muñoz
+     * @param city City
+     * @return String
+     * @see model.City
+     */
     private String writeHTML(City city) {
         StringBuilder sb = new StringBuilder();
         sb.append(""); // esto está aquí para prevenir que returnee nulos, aunque sea redundante.
@@ -152,6 +183,13 @@ public class CreateHTML {
         return sb.toString();
     }
 
+    /**
+     * Este método formatea el objeto Date pasado por parámetro al patrón "dd/MM/yyyy - HH:mm:ss",
+     * devolviéndolo como String.
+     * @author Daniel Rodríguez Muñoz
+     * @param date Date
+     * @return String
+     */
     private String formateameDate(Date date) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
         return dtf.format(date.toInstant());

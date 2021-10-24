@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * @author Daniel Rodríguez Muñoz
+ * @deprecated
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

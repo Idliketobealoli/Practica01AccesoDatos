@@ -7,6 +7,20 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Esta clase se encargará de leer los csv's y cargarlos en los objetos correspondientes,
+ * así como de cargar todos los datos necesarios en los objetos Measurement y City.
+ * Básicamente, esta clase deja las cosas listas para pasarlas a un archivo html.
+ * @author Daniel Rodríguez Muñoz
+ * @author Jaime Salcedo Vallejo
+ * @see CreateHTML
+ * @see model.City
+ * @see model.Measurement
+ * @see model.Calidad_aire_datos
+ * @see model.Calidad_aire_estaciones
+ * @see model.Calidad_aire_zonas
+ * @see utils.Util
+ */
 public class ProcessData {
     public City desiredCity = new City();
     private List<Calidad_aire_datos> cadm;
@@ -18,6 +32,11 @@ public class ProcessData {
     public Map<Integer, String> codeMeasurementUnit;
     public Map<Integer, Integer> index_to_codes;
 
+    /**
+     * Este método setea los valores del mapa index_to_codes.
+     * @author Daniel Rodríguez Muñoz
+     * @return Map
+     */
     private Map<Integer, Integer> setValuesIndexToCodes() {
         Map<Integer, Integer> map = new HashMap<>(19);
         map.put(0, 81);
@@ -42,6 +61,11 @@ public class ProcessData {
         return map;
     }
 
+    /**
+     * Este método setea los valores del mapa codeMeasurementUnit.
+     * @author Daniel Rodríguez Muñoz
+     * @return Map
+     */
     private Map<Integer, String> setValuesCodeMeasureUnit() {
         Map<Integer, String> map = new HashMap<>(19);
         map.put(81, "m/s");
@@ -66,6 +90,11 @@ public class ProcessData {
         return map;
     }
 
+    /**
+     * Este método setea los valores del mapa codeMagnitude.
+     * @author Daniel Rodríguez Muñoz
+     * @return Map
+     */
     private Map<Integer, String> setValuesCodeMagnitude() {
         Map<Integer, String> map = new HashMap<>(19);
         map.put(81, "Velocidad del viento");
@@ -90,6 +119,11 @@ public class ProcessData {
         return map;
     }
 
+    /**
+     * Este método setea los valores del mapa codeCity.
+     * @author Daniel Rodríguez Muñoz
+     * @return Map
+     */
     private Map<String, Integer> setValuesCodeCity() {
         Map<String, Integer> map = new HashMap<>(24);
         map.put("Alcalá de Henares", 5);
@@ -124,6 +158,7 @@ public class ProcessData {
             setUpMapsAndLists();
             filter(city);
             desiredCity.setName(city);
+            /*
             cadm.forEach(System.out::println);
             System.out.println("");
             cadmm.forEach(System.out::println);
@@ -135,6 +170,7 @@ public class ProcessData {
             System.out.println("");
             System.out.println("");
             System.out.println("");
+             */
             List<Measurement> measurementList = new ArrayList<>(); // = setUpMeasurementList(); BORRAR EL "NEW ARRAYLIST"
             setUpCity(desiredCity, measurementList);
             System.out.println(desiredCity);
@@ -143,6 +179,15 @@ public class ProcessData {
         }
     }
 
+    /**
+     * A este método le pasas un objeto City y una lista de Measurement y te setea todos los atributos necesarios de
+     * dicho objeto, dejándolo listo para pasarlo a un html.
+     * @author Daniel Rodríguez Muñoz
+     * @param city City
+     * @param measureList List
+     * @see model.City
+     * @see model.Measurement
+     */
     private void setUpCity(City city, List<Measurement> measureList) {
         city.setMeteoMeasurements(giveMeMeteoMeasurements(measureList));
         city.setContaminationMeasurements(giveMeContaminationMeasurements(measureList));
@@ -151,6 +196,14 @@ public class ProcessData {
         city.setAssociatedStationList(giveMeStations());
     }
 
+    /**
+     * Este método devolverá un ArrayList de objetos Measurement cuya magnitud
+     * entre dentro de los valores de los datos meteorológicos.
+     * @author Daniel Rodríguez Muñoz
+     * @param measureList List
+     * @return ArrayList
+     * @see model.Measurement
+     */
     private ArrayList<Measurement> giveMeContaminationMeasurements(List<Measurement> measureList) {
         ArrayList<Measurement> contaminationMeasurements = new ArrayList<>();
         int counter = 0;
@@ -167,6 +220,14 @@ public class ProcessData {
         return contaminationMeasurements;
     }
 
+    /**
+     * Este método devolverá un ArrayList de objetos Measurement cuya magnitud
+     * entre dentro de los valores de los datos de los agentes contaminantes.
+     * @author Daniel Rodríguez Muñoz
+     * @param measureList List
+     * @return ArrayList
+     * @see model.Measurement
+     */
     private ArrayList<Measurement> giveMeMeteoMeasurements(List<Measurement> measureList) {
         ArrayList<Measurement> meteoMeasurements = new ArrayList<>();
         int counter = 0;
@@ -183,12 +244,24 @@ public class ProcessData {
         return meteoMeasurements;
     }
 
+    /**
+     * Este método returnea una lista de Strings con los nombres de las estaciones asociadas a una determinada ciudad.
+     * @author Daniel Rodríguez Muñoz
+     * @return ArrayList
+     */
     private ArrayList<String> giveMeStations() {
         ArrayList<String> stationList = new ArrayList<>();
         cae.forEach(x -> stationList.add(x.getEstacion_direccion_postal()));
         return stationList;
     }
 
+    /**
+     * Este método returnea un Optional de objeto Date con la fecha de la primera medición registrada de la ciudad
+     * en cuestión. Si no hay ninguna fecha registrada, returnea null.
+     * @author Daniel Rodrígez Muñoz
+     * @param city City
+     * @return Optional Date
+     */
     private Date giveMeFirstDate(City city) {
         List<Date> dateList = new ArrayList<>();
         for (Measurement measure: city.getMeteoMeasurements()) {
@@ -201,6 +274,13 @@ public class ProcessData {
         return result.orElse(null);
     }
 
+    /**
+     * Este método returnea un Optional de objeto Date con la fecha de la última medición registrada de la ciudad
+     * en cuestión. Si no hay ninguna fecha registrada, returnea null.
+     * @author Daniel Rodrígez Muñoz
+     * @param city City
+     * @return Optional Date
+     */
     private Date giveMeLastDate(City city) {
         List<Date> dateList = new ArrayList<>();
         for (Measurement measure: city.getMeteoMeasurements()) {
@@ -216,6 +296,16 @@ public class ProcessData {
     // private List<Measurement> setUpMeasurementList() {
     // }
 
+    /**
+     * Este método llama a los diferentes métodos encargados de añadir los valores correspondientes a los mapas de
+     * magnitudes, unidades de medida, codigos de ciudad y nombres de magnitudes, así como los métodos que leen los
+     * csv's y los pasan a objetos de su tipo correspondiente.
+     * @author Daniel Rodríguez Muñoz
+     * @throws IOException ioe
+     * @see model.Calidad_aire_datos
+     * @see model.Calidad_aire_zonas
+     * @see model.Calidad_aire_estaciones
+     */
     private void setUpMapsAndLists() throws IOException {
         index_to_codes = setValuesIndexToCodes();
         codeMagnitude = setValuesCodeMagnitude();
@@ -227,6 +317,16 @@ public class ProcessData {
         codeCity = setValuesCodeCity();
     }
 
+    /**
+     * Este método filtra las listas de objetos Calidad_aire_[X] quedándose sólo con aquellos cuyo nombre de ciudad
+     * corresponda con el pasado por argumento o cuyo código de ciudad corresponda con el código de ciudad asociado a la
+     * ciudad pasada por argumento, devolviendo las mismas listas, pero ya filtradas.
+     * @author Daniel Rodríguez Muñoz
+     * @param cityName String
+     * @see model.Calidad_aire_datos
+     * @see model.Calidad_aire_zonas
+     * @see model.Calidad_aire_estaciones
+     */
     public void filter(String cityName) {
         // Con esto dejaremos solo las tuplas correspondientes a la ciudad que introduzcamos.
         int cityCode = cityNameToMunicipio(cityName);
@@ -237,6 +337,12 @@ public class ProcessData {
         caz = caz.stream().filter(x -> x.getZona_calidad_aire_municipio().equalsIgnoreCase(cityName)).collect(Collectors.toList());
     }
 
+    /**
+     * Este método returnea el código de ciudad asociado a la ciudad que le pasemos por parámetro.
+     * @author Daniel Rodríguez Muñoz
+     * @param cityName String
+     * @return int
+     */
     private int cityNameToMunicipio(String cityName) {
         return codeCity.get(cityName);
     }

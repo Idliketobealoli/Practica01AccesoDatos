@@ -7,6 +7,16 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Esta clase será la que utilicemos para plasmarla en el html. Se compone del nombre de la ciudad,
+ * las fechas en las que fueron registradas la primera y la última medición en dicha ciudad,
+ * una lista de nombres de estaciones asociadas, una lista de measurements meteorológicas y una
+ * lista de measurements de contaminantes.
+ * @author Daniel Rodríguez Muñoz
+ * @see City
+ * @see filterClasses.ProcessData
+ * @see filterClasses.CreateHTML
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
