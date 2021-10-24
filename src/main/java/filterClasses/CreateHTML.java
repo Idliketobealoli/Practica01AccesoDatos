@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -18,10 +20,9 @@ public class CreateHTML {
     }
 
     private Path processPath(City city, Path path) {
-        return Paths.get(path + File.separator + city.getName() + "-" +
-                city.getLastMeasurementDate().getDate() + "-" +
-                (city.getLastMeasurementDate().getMonth() + 1) + "-" +
-                (city.getLastMeasurementDate().getYear() + 1900) + ".html");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDateTime now = LocalDateTime.now();
+        return Paths.get(path + File.separator + city.getName() + "-" + dtf.format(now) + ".html");
     }
 
     private void generateHTML(City city, Path path) {
@@ -56,7 +57,6 @@ public class CreateHTML {
         sb.append(""); // esto está aquí para prevenir que returnee nulos, aunque sea redundante.
         String firstMeasDate = formateameDate(city.getFirstMeasurementDate());
         String lastMeasDate = formateameDate(city.getLastMeasurementDate());
-        lastMeasDate = lastMeasDate.replace("GMT", "");
         sb.append("<!doctype html> \n" +
                 "<html lang=\"es\"> \n" +
                 "\t<head> \n" +
@@ -153,8 +153,7 @@ public class CreateHTML {
     }
 
     private String formateameDate(Date date) {
-        String result = date.toGMTString();
-        result = result.replace("GMT", "");
-        return result;
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
+        return dtf.format(date.toInstant());
     }
 }
