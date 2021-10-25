@@ -32,7 +32,7 @@ public class Measurement {
     private double minValue;
     private Date momentMaxValue;
     private double maxValue;
-    private List<Calidad_aire_datos> data;
-    private List<Date> daysOnWhichRained;
-    private List<Double> rainMeasurements;
+    private List<Calidad_aire_datos> data = new ArrayList<>();
+    private List<Date> daysOnWhichRained = new ArrayList<>();
+    private List<Double> rainMeasurements = new ArrayList<>();
 }

@@ -54,7 +54,7 @@ public class Util {
             int ano = parseInt(st.nextToken());
             int mes = parseInt(st.nextToken());
             int dia = parseInt(st.nextToken());
-            Date date = new Date(ano, mes, dia);
+            Date date = new Date(ano-1900, mes, dia);
             cad.setFecha_medicion(date);
             int count = 1;
             while (st.hasMoreTokens()) {

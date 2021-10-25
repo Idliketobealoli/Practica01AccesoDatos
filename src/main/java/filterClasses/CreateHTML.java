@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Scanner;
@@ -61,8 +62,8 @@ public class CreateHTML {
             Scanner sc = new Scanner(System.in);
             System.out.println("'" + html.getName() + "' already exists, would you like to overwrite the file? [y/n]");
             String answer = "";
-            while ((!answer.equalsIgnoreCase("y")) |
-                    (!answer.equalsIgnoreCase("n"))) {
+            while (!(answer.equalsIgnoreCase("y")) &&
+                    !(answer.equalsIgnoreCase("n"))) {
                 answer = sc.next();
             }
             if (answer.equalsIgnoreCase("y")) {
@@ -114,7 +115,7 @@ public class CreateHTML {
             if (measure.getMagnitude() != 89) {
                 sb.append("\t\t\t\t<li><i>" + measure.getMagnitudeName() + "</i> \n" +
                         "\t\t\t\t\t<ul> \n" +
-                        "\t\t\t\t\t\t<li>" + measure.getMagnitudeName() + "media mensual: " +
+                        "\t\t\t\t\t\t<li>" + measure.getMagnitudeName() + " media mensual: " +
                         measure.getAverageValue() + measure.getMeasurementUnitName() + "</li> \n" +
                         "\t\t\t\t\t\t<li>Máxima registrada: " + measure.getMaxValue() +
                         measure.getMeasurementUnitName() + " - " + formateameDate(measure.getMomentMaxValue()) + "</li> \n" +
@@ -133,10 +134,14 @@ public class CreateHTML {
                         measure.getAverageValue() + measure.getMeasurementUnitName() + "</li> \n" +
                         "\t\t\t\t\t\t<li> Lista de días en los que ha llovido: \n" +
                         "\t\t\t\t\t\t\t<ul> \n");
-                for (int i = 0; i < measure.getDaysOnWhichRained().size(); i++) {
-                    sb.append("\t\t\t\t\t\t\t\t<li>" + formateameDate(measure.getDaysOnWhichRained().get(i)) +"-" +
-                            "Precipitación: " + measure.getRainMeasurements().get(i) +
-                            measure.getMeasurementUnitName() + "</li> \n");
+                if (measure.getDaysOnWhichRained().isEmpty()) {
+                    sb.append("\t\t\t\t\t\t\t\t<li>No llovió ningún día.</li> \n");
+                } else {
+                    for (int i = 0; i < measure.getDaysOnWhichRained().size(); i++) {
+                        sb.append("\t\t\t\t\t\t\t\t<li>" + formateameDate(measure.getDaysOnWhichRained().get(i)) +"-" +
+                                "Precipitación: " + measure.getRainMeasurements().get(i) +
+                                measure.getMeasurementUnitName() + "</li> \n");
+                    }
                 }
                 sb.append("\t\t\t\t\t\t\t</ul> \n" +
                         "\t\t\t\t\t\t</li>" +
@@ -191,7 +196,8 @@ public class CreateHTML {
      * @return String
      */
     private String formateameDate(Date date) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
-        return dtf.format(date.toInstant());
+        String formattedDate = date.toGMTString();
+        formattedDate = formattedDate.replace("GMT", "");
+        return formattedDate;
     }
 }

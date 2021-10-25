@@ -24,8 +24,8 @@ public class City {
     private String name;
     private Date firstMeasurementDate; // fecha primera medicion registrada
     private Date lastMeasurementDate; // fecha ultima medicion registrada
-    private ArrayList<String> associatedStationList;
-    private ArrayList<Measurement> meteoMeasurements;
-    private ArrayList<Measurement> contaminationMeasurements;
+    private ArrayList<String> associatedStationList = new ArrayList<>();
+    private ArrayList<Measurement> meteoMeasurements = new ArrayList<>();
+    private ArrayList<Measurement> contaminationMeasurements = new ArrayList<>();
 }
 

@@ -1,7 +1,10 @@
 package filterClasses;
 
 import model.*;
+import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import utils.Util;
 
 import java.io.IOException;
@@ -159,7 +162,6 @@ public class ProcessData {
             setUpMapsAndLists();
             filter(city);
             desiredCity.setName(city);
-            /*
             cadm.forEach(System.out::println);
             System.out.println("");
             cadmm.forEach(System.out::println);
@@ -171,8 +173,8 @@ public class ProcessData {
             System.out.println("");
             System.out.println("");
             System.out.println("");
-             */
-            List<Measurement> measurementList = new ArrayList<>(); // = setUpMeasurementList(); BORRAR EL "NEW ARRAYLIST"
+
+            List<Measurement> measurementList = setUpMeasurementList();
             setUpCity(desiredCity, measurementList);
             System.out.println(desiredCity);
         } catch (IOException e) {
@@ -299,41 +301,90 @@ public class ProcessData {
         int count = 0;
         int code;
         while(count < index_to_codes.size()){
-            Measurement meas = new Measurement();
+            boolean ignoreEverything = false;
             code = index_to_codes.get(count);
-            meas.setMagnitude(code);
-            meas.setMagnitudeName(giveMeMagnitudeName(code));
-            meas.setMeasurementUnitName(giveMeMeasurementUnitName(code));
-            if (!(code >= 81 && code <= 89)){
-                for(Calidad_aire_datos cad: cadm){
-                    if(cad.getMagnitud() == meas.getMagnitude()){
-                        meas.getData().add(cad);
+            if (cae.get(0).getEstacion_analizador_NO().equalsIgnoreCase("null") && code == 7) {ignoreEverything = true;}
+            if (cae.get(0).getEstacion_analizador_NO2().equalsIgnoreCase("null") && code == 8) {ignoreEverything = true;}
+            if (cae.get(0).getEstacion_analizador_PM10().equalsIgnoreCase("null") && code == 10) {ignoreEverything = true;}
+            if (cae.get(0).getEstacion_analizador_PM2_5().equalsIgnoreCase("null") && code == 9) {ignoreEverything = true;}
+            if (cae.get(0).getEstacion_analizador_O3().equalsIgnoreCase("null") && code == 14) {ignoreEverything = true;}
+            if (cae.get(0).getEstacion_analizador_TOL().equalsIgnoreCase("null") && code == 20) {ignoreEverything = true;}
+            if (cae.get(0).getEstacion_analizador_BEN().equalsIgnoreCase("null") && code == 30) {ignoreEverything = true;}
+            if (cae.get(0).getEstacion_analizador_XIL().equalsIgnoreCase("null") && code == 431) {ignoreEverything = true;}
+            if (cae.get(0).getEstacion_analizador_CO().equalsIgnoreCase("null") && code == 6) {ignoreEverything = true;}
+            if (cae.get(0).getEstacion_analizador_SO2().equalsIgnoreCase("null") && code == 1) {ignoreEverything = true;}
+            if (cae.get(0).getEstacion_analizador_HCT().equalsIgnoreCase("null") && code == 42) {ignoreEverything = true;}
+            if (cae.get(0).getEstacion_analizador_HNM().equalsIgnoreCase("null") && code == 44) {ignoreEverything = true;}
+            if (code == 22 || code == 12) {ignoreEverything = true;}
+            if (!ignoreEverything) {
+                Measurement meas = new Measurement();
+                meas.setMagnitude(code);
+                meas.setMagnitudeName(giveMeMagnitudeName(code));
+                meas.setMeasurementUnitName(giveMeMeasurementUnitName(code));
+                if (!(code >= 81 && code <= 89)){
+                    for(Calidad_aire_datos cad: cadm){
+                        if(cad.getMagnitud() == meas.getMagnitude()){
+                            meas.getData().add(cad);
+                        }
+                    }
+                }else {
+                    for(Calidad_aire_datos cad: cadmm){
+                        if(cad.getMagnitud() == meas.getMagnitude()){
+                            meas.getData().add(cad);
+                        }
                     }
                 }
-            }else {
-                for(Calidad_aire_datos cad: cadmm){
-                    if(cad.getMagnitud() == meas.getMagnitude()){
-                        meas.getData().add(cad);
-                    }
-                }
-            }
-            if(!(code == 89)){
                 meas.setAverageValue(giveMeAverageValue(meas.getData()));
-                meas.setMomentMinValue(giveMeMomentMinValue(meas.getData()));
-                meas.setMinValue(giveMeMinValue(meas.getData()));
-                meas.setMomentMaxValue(giveMeMomentMaxValue(meas.getData()));
-                meas.setMaxValue(giveMeMaxValue(meas.getData()));
+                if(!(code == 89)){
+                    meas.setMomentMinValue(giveMeMomentMinValue(meas.getData()));
+                    meas.setMinValue(giveMeMinValue(meas.getData()));
+                    meas.setMomentMaxValue(giveMeMomentMaxValue(meas.getData()));
+                    meas.setMaxValue(giveMeMaxValue(meas.getData()));
+                } else {
+                    meas.setDaysOnWhichRained(giveMeDaysOnWhichRained(meas.getData()));
+                    meas.setRainMeasurements(giveMeRainMeasurements(meas.getData()));
+                }
                 meas.setChart(giveMeChart(meas.getData()));
+                measList.add(meas);
             }
             count++;
-            measList.add(meas);
         }
         return measList;
     }
+
+    private List<Date> giveMeDaysOnWhichRained(List<Calidad_aire_datos> data) {
+        ArrayList<Date> daysOnWhichRained = new ArrayList<>();
+        for (Calidad_aire_datos cad : data) {
+            boolean rained = false;
+            for (int i = 0; i < cad.getListV().size(); i++) {
+                if ((cad.getListV().get(i).equals('V')) && (cad.getListH().get(i) != null)) {
+                    rained = true;
+                }
+            }
+            if (rained) {
+                daysOnWhichRained.add(cad.getFecha_medicion());
+            }
+        }
+        return daysOnWhichRained;
+    }
+
+    private List<Double> giveMeRainMeasurements(List<Calidad_aire_datos> data) {
+        ArrayList<Double> rainMeasurements = new ArrayList<>();
+        for (Calidad_aire_datos cad : data) {
+            for (int i = 0; i < cad.getListV().size(); i++) {
+                if ((cad.getListV().get(i).equals('V')) && (cad.getListH().get(i) != null)) {
+                    rainMeasurements.add(cad.getListH().get(i));
+                }
+            }
+        }
+        return rainMeasurements;
+    }
+
     //método que devuelve el nombre de las mediciones
     private String giveMeMagnitudeName(int code) {
         return codeMagnitude.get(code);
     }
+
     //método que devuelve el nombre de las unidades de mediciones
     private String giveMeMeasurementUnitName(int code) {
         return codeMeasurementUnit.get(code);
@@ -353,6 +404,7 @@ public class ProcessData {
         }
         return (result/count);
     }
+
     //método para saber la fecha en la que se produjo el valor mínimo
     private Date giveMeMomentMinValue(List<Calidad_aire_datos> cad){
         ArrayList<Date> dateList = new ArrayList<Date>();
@@ -360,9 +412,11 @@ public class ProcessData {
         int positionMinValue = 0;
         for (Calidad_aire_datos ca : cad) {
             for (int i = 0; i < ca.getListH().size(); i++) {
-                if (ca.getListH().get(i) > lowestValue) {
-                    lowestValue = ca.getListH().get(i);
-                    positionMinValue = i;
+                if (ca.getListH().get(i) != null) {
+                    if (ca.getListH().get(i) > lowestValue) {
+                        lowestValue = ca.getListH().get(i);
+                        positionMinValue = i;
+                    }
                 }
             }
             Date date = new Date (ca.getFecha_medicion().getYear(), ca.getFecha_medicion()
@@ -372,15 +426,35 @@ public class ProcessData {
         Optional<Date> result = dateList.stream().min(Date::compareTo);
         return result.orElse(null);
     }
+
     //método para saber el valor mínimo
     private double giveMeMinValue(List<Calidad_aire_datos> cad) throws NullPointerException{
         ArrayList<Double> doubleList = new ArrayList<>();
         for(Calidad_aire_datos c : cad){
-            doubleList.add(c.getListH().stream().min(Comparator.comparing(Double::doubleValue)).get());
+            int i = 0;
+            double currentMinValue = -987_689_999;
+            // Esto nos asegura que currentMinValue no será nulo,
+            // sino el primer elemento de la listH que tenga un valor asignado
+            while (i < c.getListH().size() || currentMinValue == -987689999) {
+                if (c.getListH().get(i) == null) {}
+                else {
+                    currentMinValue = c.getListH().get(i);
+                }
+                i++;
+            }
+            // Esto nos asegura coger el valor no nulo más pequeño de la listH, ignorando nulos sin soltar excepción.
+            for (int j = 0; j < c.getListH().size(); j++) {
+                if (c.getListH().get(j) == null) {}
+                else if (c.getListH().get(j) < currentMinValue) {
+                    currentMinValue = c.getListH().get(j);
+                }
+            }
+            doubleList.add(currentMinValue);
         }
         Optional<Double>result = doubleList.stream().min(Comparator.comparing(x -> x));
         return result.orElse(null);
     }
+
     //método para saber la fecha en la que se produjo el valor máximo
     private Date giveMeMomentMaxValue(List<Calidad_aire_datos> cad){
         ArrayList<Date> dateList = new ArrayList<Date>();
@@ -388,9 +462,11 @@ public class ProcessData {
         int positionMaxValue = 0;
         for (Calidad_aire_datos ca : cad) {
             for (int i = 0; i < ca.getListH().size(); i++) {
-                if (ca.getListH().get(i) > highestValue) {
-                    highestValue = ca.getListH().get(i);
-                    positionMaxValue = i;
+                if (ca.getListH().get(i) != null) {
+                    if (ca.getListH().get(i) > highestValue) {
+                        highestValue = ca.getListH().get(i);
+                        positionMaxValue = i;
+                    }
                 }
             }
             Date date = new Date (ca.getFecha_medicion().getYear(), ca.getFecha_medicion().getMonth(), ca.getFecha_medicion().getDate(), ca.getHour().get(positionMaxValue), 0, 0);
@@ -399,18 +475,50 @@ public class ProcessData {
         Optional<Date> result = dateList.stream().max(Date::compareTo);
         return result.orElse(null);
     }
+
     //método para saber el valor máximo
     private double giveMeMaxValue(List<Calidad_aire_datos> cad) throws NullPointerException{
         ArrayList<Double> list = new ArrayList<>();
         for(Calidad_aire_datos c : cad){
-            list.add(c.getListH().stream().max(Comparator.comparing(Double::doubleValue)).get());
+            int i = 0;
+            double currentMaxValue = 987_689_999;
+            // Esto nos asegura que currentMaxValue no será nulo,
+            // sino el primer elemento de la listH que tenga un valor asignado
+            while (i < c.getListH().size() || currentMaxValue == 987689999) {
+                if (c.getListH().get(i) == null) {}
+                else {
+                    currentMaxValue = c.getListH().get(i);
+                }
+                i++;
+            }
+            // Esto nos asegura coger el valor no nulo más grande de la listH, ignorando nulos sin soltar excepción.
+            for (int j = 0; j < c.getListH().size(); j++) {
+                if (c.getListH().get(j) == null) {}
+                else if (c.getListH().get(j) > currentMaxValue) {
+                    currentMaxValue = c.getListH().get(j);
+                }
+            }
+            list.add(currentMaxValue);
         }
         Optional<Double>result = list.stream().max(Comparator.comparing(x -> x));
         return result.orElse(null);
     }
+
     //método para crear un histograma (incompleto)
     private JFreeChart giveMeChart(List<Calidad_aire_datos> cad) {
-        JFreeChart chart = null;
+        DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
+        for (Calidad_aire_datos data : cad) {
+            for (int i = 0; i < data.getListV().size(); i++) {
+                if (data.getListV().get(i).equals('V') && data.getListH().get(i) != null) {
+                    dataSet.setValue(data.getListH().get(i), data.getFecha_medicion(), data.getHour().get(i));
+                }
+            }
+        }
+        String nameMagnitude = codeMagnitude.get(cad.get(0).getMagnitud());
+        JFreeChart chart = ChartFactory.createLineChart(
+                nameMagnitude, "Tiempo", "Valor",
+                dataSet, PlotOrientation.VERTICAL,
+                true, true, true);
         return chart;
     }
 
