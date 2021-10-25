@@ -297,6 +297,14 @@ public class ProcessData {
         return result.orElse(null);
     }
 
+    /**
+     * Este método construye una lista de objetos measurement y, en función del código del objeto, el cual
+     * coincide con su número index del csv, hace un set de magnitud, nombre de magnitud y una unidad de medida.
+     * Posteriormente, y dependiendo del código del objeto Measurement, hará un set del resto de datos de la
+     * medición.
+     * @author Jaime Salcedo Vallejo
+     * @return List
+     */
     private List<Measurement> setUpMeasurementList() {
         List<Measurement> measList = new ArrayList<>();
         int count = 0;
@@ -353,6 +361,13 @@ public class ProcessData {
         return measList;
     }
 
+    /**
+     * Este método solo se ejecutará si el código del objeto Measurement es 89, y crea un ArrayList donde
+     * se guardarán las fechas de los días que haya llovido y finalmente lo devolverá.
+     * @author Jaime Salcedo Vallejo
+     * @param data List
+     * @return List
+     */
     private List<Date> giveMeDaysOnWhichRained(List<Calidad_aire_datos> data) {
         ArrayList<Date> daysOnWhichRained = new ArrayList<>();
         for (Calidad_aire_datos cad : data) {
@@ -369,6 +384,14 @@ public class ProcessData {
         return daysOnWhichRained;
     }
 
+    /**
+     * Este método, al igual que el anterior, solo se ejecutará si el código del objeto Measurement es 89.
+     * Crea un ArrayList en el que se guardarán las mediciones de lluvia de los días en los que haya llovido
+     * y finalmente lo devolverá.
+     * @author Jaime Salcedo Vallejo
+     * @param data List
+     * @return ArrayList
+     */
     private List<Double> giveMeRainMeasurements(List<Calidad_aire_datos> data) {
         ArrayList<Double> rainMeasurements = new ArrayList<>();
         for (Calidad_aire_datos cad : data) {
@@ -381,17 +404,36 @@ public class ProcessData {
         return rainMeasurements;
     }
 
-    //método que devuelve el nombre de las mediciones
+    /**
+     * Este sencillo método devuelve el nombre de la magnitud asociada al código que le hayamos
+     * pasado por parámetro.
+     * @author Jaime Salcedo Vallejo
+     * @param code int
+     * @return String
+     */
     private String giveMeMagnitudeName(int code) {
         return codeMagnitude.get(code);
     }
 
-    //método que devuelve el nombre de las unidades de mediciones
+    /**
+     * Este método, de manera similar al anterior, devuelve el nombre de la unidad de medida asociada
+     * al código que le hayamos pasado por parámetro.
+     * @author Jaime Salcedo Vallejo
+     * @param code int
+     * @return String
+     */
     private String giveMeMeasurementUnitName(int code) {
         return codeMeasurementUnit.get(code);
     }
 
-    //método para calcular la media
+    /**
+     * Este método calcula la media sumando los valores de cada objeto Calidad_aire_datos dentro de
+     * nuestra lista y lo divide entre el número total de objetos que ha recorrido nuestro contador en la
+     * lista
+     * @author Jaime Salcedo Vallejo
+     * @param data List
+     * @return double
+     */
     private double giveMeAverageValue(List<Calidad_aire_datos> data){
         double result = 0;
         int count = 0;
@@ -406,7 +448,14 @@ public class ProcessData {
         return (result/count);
     }
 
-    //método para saber la fecha en la que se produjo el valor mínimo
+    /**
+     * Este método crea un ArrayList de fechas, posteriormente se crearán objetos Date que se guardarán
+     * dentro del ArrayList para proceder al filtrado del mismo. Se realizará el filtrado de manera que
+     * obtengamos el momento en el que se produjo el valor mínimo.
+     * @author Jaime Salcedo Vallejo
+     * @param cad List
+     * @return Optional Date
+     */
     private Date giveMeMomentMinValue(List<Calidad_aire_datos> cad){
         ArrayList<Date> dateList = new ArrayList<Date>();
         double lowestValue = 0;
@@ -428,7 +477,15 @@ public class ProcessData {
         return result.orElse(null);
     }
 
-    //método para saber el valor mínimo
+    /**
+     * Este método crea un ArrayList de Double, recorre los objetos Calidad_aire_datos dentro de nuestra
+     * lista pasada por parámetro y busca los valores, los añade al ArrayList y después lo filtra
+     * para buscar el mínimo y lo guarda en una variable result para después devolverla
+     * @author Jaime Salcedo Vallejo
+     * @param cad List
+     * @return double
+     * @throws NullPointerException
+     */
     private double giveMeMinValue(List<Calidad_aire_datos> cad) throws NullPointerException{
         ArrayList<Double> doubleList = new ArrayList<>();
         for(Calidad_aire_datos c : cad){
@@ -456,7 +513,14 @@ public class ProcessData {
         return result.orElse(null);
     }
 
-    //método para saber la fecha en la que se produjo el valor máximo
+    /**
+     * Este método crea un ArrayList de fechas, posteriormente se crearán objetos Date que se guardarán
+     * dentro del ArrayList para proceder al filtrado del mismo. Se realizará el filtrado de manera que
+     * obtengamos el momento en el que se produjo el valor máximo.
+     * @author Jaime Salcedo Vallejo
+     * @param cad List
+     * @return Date
+     */
     private Date giveMeMomentMaxValue(List<Calidad_aire_datos> cad){
         ArrayList<Date> dateList = new ArrayList<Date>();
         double highestValue = 0;
@@ -477,7 +541,15 @@ public class ProcessData {
         return result.orElse(null);
     }
 
-    //método para saber el valor máximo
+    /**
+     * Este método crea un ArrayList de Double, recorre los objetos Calidad_aire_datos dentro de nuestra
+     * lista pasada por parámetro y busca los valores, los añade al ArrayList y después lo filtra
+     * para buscar el máximo y lo guarda en una variable result para después devolverla
+     * @author Jaime Salcedo Vallejo
+     * @param cad List
+     * @return double
+     * @throws NullPointerException
+     */
     private double giveMeMaxValue(List<Calidad_aire_datos> cad) throws NullPointerException{
         ArrayList<Double> list = new ArrayList<>();
         for(Calidad_aire_datos c : cad){
@@ -505,7 +577,13 @@ public class ProcessData {
         return result.orElse(null);
     }
 
-    //método para crear un histograma (incompleto)
+    /**
+     * Este método crea gráficos en función de los datos que le pasemos. También podemos decirle el tipo de
+     * gráfico y dar nombres a los diferentes ejes y añadir leyendas
+     * @author Jaime Salcedo Vallejo
+     * @param cad List
+     * @return JFreeChart
+     */
     private JFreeChart giveMeChart(List<Calidad_aire_datos> cad) {
         DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
         for (Calidad_aire_datos data : cad) {
