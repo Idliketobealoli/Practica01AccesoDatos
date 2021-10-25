@@ -8,7 +8,7 @@ import org.jfree.chart.JFreeChart;
 import java.util.*;
 
 /**
- * Esta clase será la que agrupe cada objeto Calidad_arire_datos en función de su magnitud,
+ * Esta clase será la que agrupe cada objeto Calidad_aire_datos en función de su magnitud,
  * así como contendrá la media, máxima y mínima de los datos que tenga.
  * Tendrá tambien el jFreeChart de dichos datos y la unidad de medida de estos.
  * Si son datos de lluvia, en lugar de tener máxima, mínima y media, tendrá una lista de días
