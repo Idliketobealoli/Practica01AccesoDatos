@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Esta clase pojo se encargará de decirnos si una medición se hace en un determinado municipio o no.
+ * @author Daniel Rodríguez Muñoz
+ * @see Calidad_aire_datos
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
