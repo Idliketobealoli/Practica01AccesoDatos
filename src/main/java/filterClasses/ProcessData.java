@@ -162,6 +162,7 @@ public class ProcessData {
             setUpMapsAndLists();
             filter(city);
             desiredCity.setName(city);
+            /*
             cadm.forEach(System.out::println);
             System.out.println("");
             cadmm.forEach(System.out::println);
@@ -173,10 +174,10 @@ public class ProcessData {
             System.out.println("");
             System.out.println("");
             System.out.println("");
-
+             */
             List<Measurement> measurementList = setUpMeasurementList();
             setUpCity(desiredCity, measurementList);
-            System.out.println(desiredCity);
+            // System.out.println(desiredCity);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -303,19 +304,19 @@ public class ProcessData {
         while(count < index_to_codes.size()){
             boolean ignoreEverything = false;
             code = index_to_codes.get(count);
-            if (cae.get(0).getEstacion_analizador_NO().equalsIgnoreCase("null") && code == 7) {ignoreEverything = true;}
-            if (cae.get(0).getEstacion_analizador_NO2().equalsIgnoreCase("null") && code == 8) {ignoreEverything = true;}
-            if (cae.get(0).getEstacion_analizador_PM10().equalsIgnoreCase("null") && code == 10) {ignoreEverything = true;}
-            if (cae.get(0).getEstacion_analizador_PM2_5().equalsIgnoreCase("null") && code == 9) {ignoreEverything = true;}
-            if (cae.get(0).getEstacion_analizador_O3().equalsIgnoreCase("null") && code == 14) {ignoreEverything = true;}
-            if (cae.get(0).getEstacion_analizador_TOL().equalsIgnoreCase("null") && code == 20) {ignoreEverything = true;}
-            if (cae.get(0).getEstacion_analizador_BEN().equalsIgnoreCase("null") && code == 30) {ignoreEverything = true;}
-            if (cae.get(0).getEstacion_analizador_XIL().equalsIgnoreCase("null") && code == 431) {ignoreEverything = true;}
-            if (cae.get(0).getEstacion_analizador_CO().equalsIgnoreCase("null") && code == 6) {ignoreEverything = true;}
-            if (cae.get(0).getEstacion_analizador_SO2().equalsIgnoreCase("null") && code == 1) {ignoreEverything = true;}
-            if (cae.get(0).getEstacion_analizador_HCT().equalsIgnoreCase("null") && code == 42) {ignoreEverything = true;}
-            if (cae.get(0).getEstacion_analizador_HNM().equalsIgnoreCase("null") && code == 44) {ignoreEverything = true;}
-            if (code == 22 || code == 12) {ignoreEverything = true;}
+            if ((cae.get(0).getEstacion_analizador_NO().equalsIgnoreCase("null") && code == 7) ||
+                    (cae.get(0).getEstacion_analizador_NO2().equalsIgnoreCase("null") && code == 8) ||
+                    (cae.get(0).getEstacion_analizador_PM10().equalsIgnoreCase("null") && code == 10) ||
+                    (cae.get(0).getEstacion_analizador_PM2_5().equalsIgnoreCase("null") && code == 9) ||
+                    (cae.get(0).getEstacion_analizador_O3().equalsIgnoreCase("null") && code == 14) ||
+                    (cae.get(0).getEstacion_analizador_TOL().equalsIgnoreCase("null") && code == 20) ||
+                    (cae.get(0).getEstacion_analizador_BEN().equalsIgnoreCase("null") && code == 30) ||
+                    (cae.get(0).getEstacion_analizador_XIL().equalsIgnoreCase("null") && code == 431) ||
+                    (cae.get(0).getEstacion_analizador_CO().equalsIgnoreCase("null") && code == 6) ||
+                    (cae.get(0).getEstacion_analizador_SO2().equalsIgnoreCase("null") && code == 1) ||
+                    (cae.get(0).getEstacion_analizador_HCT().equalsIgnoreCase("null") && code == 42) ||
+                    (cae.get(0).getEstacion_analizador_HNM().equalsIgnoreCase("null") && code == 44) ||
+                    (code == 22 || code == 12)) {ignoreEverything = true;}
             if (!ignoreEverything) {
                 Measurement meas = new Measurement();
                 meas.setMagnitude(code);
@@ -518,7 +519,7 @@ public class ProcessData {
         JFreeChart chart = ChartFactory.createLineChart(
                 nameMagnitude, "Tiempo", "Valor",
                 dataSet, PlotOrientation.VERTICAL,
-                true, true, true);
+                true, true, false);
         return chart;
     }
 
@@ -570,6 +571,13 @@ public class ProcessData {
      * @return int
      */
     private int cityNameToMunicipio(String cityName) {
-        return codeCity.get(cityName);
+        int code = -1;
+        try {
+            code = codeCity.get(cityName);
+        } catch (Exception e) {
+            System.out.println("There is no data for the selected city. Please make sure you typed it correctly. (case sensitive)");
+            System.exit(42_069);
+        }
+        return code;
     }
 }

@@ -130,9 +130,9 @@ public class CreateHTML {
             } else {
                 sb.append("\t\t\t\t<li><i>" + measure.getMagnitudeName() + "</i> \n" +
                         "\t\t\t\t\t<ul> \n" +
-                        "\t\t\t\t\t\t<li>" + measure.getMagnitudeName() + "media mensual: " +
+                        "\t\t\t\t\t\t<li>" + measure.getMagnitudeName() + " media mensual: " +
                         measure.getAverageValue() + measure.getMeasurementUnitName() + "</li> \n" +
-                        "\t\t\t\t\t\t<li> Lista de días en los que ha llovido: \n" +
+                        "\t\t\t\t\t\t<li>Lista de días en los que ha llovido: \n" +
                         "\t\t\t\t\t\t\t<ul> \n");
                 if (measure.getDaysOnWhichRained().isEmpty()) {
                     sb.append("\t\t\t\t\t\t\t\t<li>No llovió ningún día.</li> \n");
