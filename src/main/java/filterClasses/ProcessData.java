@@ -327,22 +327,25 @@ public class ProcessData {
                 }else {
                     for(Calidad_aire_datos cad: cadmm){
                         if(cad.getMagnitud() == meas.getMagnitude()){
+
                             meas.getData().add(cad);
                         }
                     }
                 }
-                meas.setAverageValue(giveMeAverageValue(meas.getData()));
-                if(!(code == 89)){
-                    meas.setMomentMinValue(giveMeMomentMinValue(meas.getData()));
-                    meas.setMinValue(giveMeMinValue(meas.getData()));
-                    meas.setMomentMaxValue(giveMeMomentMaxValue(meas.getData()));
-                    meas.setMaxValue(giveMeMaxValue(meas.getData()));
-                } else {
-                    meas.setDaysOnWhichRained(giveMeDaysOnWhichRained(meas.getData()));
-                    meas.setRainMeasurements(giveMeRainMeasurements(meas.getData()));
+                if (!meas.getData().isEmpty()) {
+                    meas.setAverageValue(giveMeAverageValue(meas.getData()));
+                    if(!(code == 89)){
+                        meas.setMomentMinValue(giveMeMomentMinValue(meas.getData()));
+                        meas.setMinValue(giveMeMinValue(meas.getData()));
+                        meas.setMomentMaxValue(giveMeMomentMaxValue(meas.getData()));
+                        meas.setMaxValue(giveMeMaxValue(meas.getData()));
+                    } else {
+                        meas.setDaysOnWhichRained(giveMeDaysOnWhichRained(meas.getData()));
+                        meas.setRainMeasurements(giveMeRainMeasurements(meas.getData()));
+                    }
+                    meas.setChart(giveMeChart(meas.getData()));
+                    measList.add(meas);
                 }
-                meas.setChart(giveMeChart(meas.getData()));
-                measList.add(meas);
             }
             count++;
         }

@@ -124,7 +124,14 @@ public class CreateHTML {
     private void setUpChartsFolder(Path pathToImages, Measurement meas) {
         Path path = Paths.get(pathToImages + File.separator + meas.getMagnitude());
         File file = path.toFile();
-        String pathImage = String.valueOf(path) + File.separator + meas.getMagnitude() + ".png";
+        String pathImage = path + File.separator + meas.getMagnitude() + ".png";
+        File fileImage = new File(pathImage);
+        if (fileImage.exists()){
+            fileImage.delete();
+        }
+        if (file.exists()){
+            file.delete();
+        }
         boolean mkdirsDidItsJob = false;
         try {
             if (!(file.exists())){
