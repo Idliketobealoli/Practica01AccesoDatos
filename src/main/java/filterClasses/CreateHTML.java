@@ -278,7 +278,6 @@ public class CreateHTML {
      * @return String
      */
     private String formateameDateSinHour(Date date) {
-        // Date formattedDate = new Date(date.getYear(), date.getMonth(), date.getDate());
         String dateWithoutHour = date.toGMTString();
         dateWithoutHour = Pattern.compile("[0-9]{2}:[0-9]{2}:[0-9]{2} GMT$").matcher(dateWithoutHour).replaceAll("");
         return dateWithoutHour;
