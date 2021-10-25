@@ -358,7 +358,7 @@ public class ProcessData {
         for (Calidad_aire_datos cad : data) {
             boolean rained = false;
             for (int i = 0; i < cad.getListV().size(); i++) {
-                if ((cad.getListV().get(i).equals('V')) && (cad.getListH().get(i) != null)) {
+                if ((cad.getListV().get(i).equals('V')) && (cad.getListH().get(i) != null) && (cad.getListH().get(i) != 0)) {
                     rained = true;
                 }
             }
@@ -373,7 +373,7 @@ public class ProcessData {
         ArrayList<Double> rainMeasurements = new ArrayList<>();
         for (Calidad_aire_datos cad : data) {
             for (int i = 0; i < cad.getListV().size(); i++) {
-                if ((cad.getListV().get(i).equals('V')) && (cad.getListH().get(i) != null)) {
+                if ((cad.getListV().get(i).equals('V')) && (cad.getListH().get(i) != null) && (cad.getListH().get(i) != 0)) {
                     rainMeasurements.add(cad.getListH().get(i));
                 }
             }

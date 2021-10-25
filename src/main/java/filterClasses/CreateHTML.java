@@ -3,16 +3,17 @@ package filterClasses;
 import model.City;
 import model.Measurement;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class CreateHTML {
     public CreateHTML(City city, String path) {
@@ -55,6 +56,7 @@ public class CreateHTML {
         if (!html.exists()) {
             try (FileWriter writer = new FileWriter(html)) {
                 writer.write(writeHTML(city));
+                Desktop.getDesktop().browse(path.toUri());
             } catch(IOException ex) {
                 ex.printStackTrace();
             }
@@ -138,7 +140,7 @@ public class CreateHTML {
                     sb.append("\t\t\t\t\t\t\t\t<li>No llovió ningún día.</li> \n");
                 } else {
                     for (int i = 0; i < measure.getDaysOnWhichRained().size(); i++) {
-                        sb.append("\t\t\t\t\t\t\t\t<li>" + formateameDate(measure.getDaysOnWhichRained().get(i)) +"-" +
+                        sb.append("\t\t\t\t\t\t\t\t<li>" + formateameDateSinHour(measure.getDaysOnWhichRained().get(i)) +"- " +
                                 "Precipitación: " + measure.getRainMeasurements().get(i) +
                                 measure.getMeasurementUnitName() + "</li> \n");
                     }
@@ -200,4 +202,25 @@ public class CreateHTML {
         formattedDate = formattedDate.replace("GMT", "");
         return formattedDate;
     }
+
+    /**
+     * Este método formatea el objeto Date pasado por parámetro al patrón "dd/MM/yyyy",
+     * devolviéndolo como String.
+     * @author Daniel Rodríguez Muñoz
+     * @param date Date
+     * @return String
+     */
+    private String formateameDateSinHour(Date date) {
+        // Date formattedDate = new Date(date.getYear(), date.getMonth(), date.getDate());
+        String dateWithoutHour = date.toGMTString();
+        dateWithoutHour = Pattern.compile("[0-9]{2}:[0-9]{2}:[0-9]{2} GMT$").matcher(dateWithoutHour).replaceAll("");
+        return dateWithoutHour;
+    }
+
+    /*
+    private void metodoprueba (Measurement meas) {
+        meas.getChart();
+    }
+    
+     */
 }
