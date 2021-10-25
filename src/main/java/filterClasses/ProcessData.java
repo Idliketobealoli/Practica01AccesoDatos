@@ -4,7 +4,9 @@ import model.*;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.statistics.HistogramDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import utils.Util;
 
 import java.io.IOException;
@@ -408,7 +410,7 @@ public class ProcessData {
 
     //método para saber la fecha en la que se produjo el valor mínimo
     private Date giveMeMomentMinValue(List<Calidad_aire_datos> cad){
-        ArrayList<Date> dateList = new ArrayList<Date>();
+        ArrayList<Date> dateList = new ArrayList<>();
         double lowestValue = 0;
         int positionMinValue = 0;
         for (Calidad_aire_datos ca : cad) {
@@ -458,7 +460,7 @@ public class ProcessData {
 
     //método para saber la fecha en la que se produjo el valor máximo
     private Date giveMeMomentMaxValue(List<Calidad_aire_datos> cad){
-        ArrayList<Date> dateList = new ArrayList<Date>();
+        ArrayList<Date> dateList = new ArrayList<>();
         double highestValue = 0;
         int positionMaxValue = 0;
         for (Calidad_aire_datos ca : cad) {
@@ -477,7 +479,6 @@ public class ProcessData {
         return result.orElse(null);
     }
 
-    //método para saber el valor máximo
     private double giveMeMaxValue(List<Calidad_aire_datos> cad) throws NullPointerException{
         ArrayList<Double> list = new ArrayList<>();
         for(Calidad_aire_datos c : cad){
@@ -505,22 +506,66 @@ public class ProcessData {
         return result.orElse(null);
     }
 
-    //método para crear un histograma (incompleto)
+    /**
+     * Crea las jFreeCharts correspondientes en función de la lista de Calidad_aire_datos que le pasemos.
+     * @author Jaime Salcedo Vallejo
+     * @author Daniel Rodríguez Muñoz
+     * @param cad
+     * @return
+     */
     private JFreeChart giveMeChart(List<Calidad_aire_datos> cad) {
-        DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
-        for (Calidad_aire_datos data : cad) {
-            for (int i = 0; i < data.getListV().size(); i++) {
-                if (data.getListV().get(i).equals('V') && data.getListH().get(i) != null) {
-                    dataSet.setValue(data.getListH().get(i), data.getFecha_medicion(), data.getHour().get(i));
+        String nameMagnitude = codeMagnitude.get(cad.get(0).getMagnitud());
+        ArrayList<Double> values = new ArrayList<>();
+        if (cad.get(0).getMagnitud() == 89) {
+            for (Calidad_aire_datos data : cad) {
+                for (int i = 0; i < data.getListV().size(); i++) {
+                    if (data.getListV().get(i).equals('V') && data.getListH().get(i) != null) {
+                        values.add(data.getListH().get(i));
+                    }
                 }
             }
+            HistogramDataset dataset = new HistogramDataset();
+            double[] doubleArray = new double[values.size()];
+            for (int i = 0; i < values.size(); i++) {
+                doubleArray[i] = values.get(i);
+            }
+            dataset.addSeries("key", doubleArray, 50);
+            JFreeChart chart = ChartFactory.createHistogram(nameMagnitude,
+                    "Dias",
+                    "Magnitud",
+                    dataset,
+                    PlotOrientation.VERTICAL,
+                    true,
+                    true,
+                    false);
+            return chart;
+        } else {
+            for (Calidad_aire_datos data : cad) {
+                for (int i = 0; i < data.getListV().size(); i++) {
+                    if (data.getListV().get(i).equals('V') && data.getListH().get(i) != null) {
+                        values.add(data.getListH().get(i));
+                    }
+                }
+            }
+            var doubleValues = new XYSeries("2021");
+            for (int i = 0; i < values.size(); i++) {
+                doubleValues.add(i, values.get(i));
+            }
+            var dataset = new XYSeriesCollection();
+            dataset.addSeries(doubleValues);
+
+            JFreeChart chart = ChartFactory.createXYLineChart(
+                    nameMagnitude,
+                    "Dias",
+                    "Magnitud",
+                    dataset,
+                    PlotOrientation.VERTICAL,
+                    true,
+                    true,
+                    false
+            );
+            return chart;
         }
-        String nameMagnitude = codeMagnitude.get(cad.get(0).getMagnitud());
-        JFreeChart chart = ChartFactory.createLineChart(
-                nameMagnitude, "Tiempo", "Valor",
-                dataSet, PlotOrientation.VERTICAL,
-                true, true, false);
-        return chart;
     }
 
     /**

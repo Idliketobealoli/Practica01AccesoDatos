@@ -2,6 +2,7 @@ package filterClasses;
 
 import model.City;
 import model.Measurement;
+import org.jfree.chart.ChartUtilities;
 
 import java.awt.*;
 import java.io.File;
@@ -18,7 +19,18 @@ import java.util.regex.Pattern;
 public class CreateHTML {
     public CreateHTML(City city, String path) {
         Path processedPath = processPath(city, Path.of(path));
-        generateHTML(city, processedPath);
+        Path pathToImages = createImageFolder(Path.of(path));
+        generateHTML(city, processedPath, pathToImages);
+    }
+
+    /**
+     * Este método crea la carpeta resources dentro del directorio donde le indiques.
+     * @author Daniel Rodríguez Muñoz
+     * @param path
+     * @return
+     */
+    private Path createImageFolder(Path path) {
+        return Paths.get(path + File.separator + "resources");
     }
 
     /**
@@ -51,11 +63,16 @@ public class CreateHTML {
      * @see model.City
      * @see java.util.Scanner
      */
-    private void generateHTML(City city, Path path) {
+    private void generateHTML(City city, Path path, Path pathToImages) {
         File html = path.toFile();
         if (!html.exists()) {
+            File resources = pathToImages.toFile();
+            if (!resources.exists()) {
+                resources.mkdirs();
+            }
+            generateResourcesFolder(city, pathToImages);
             try (FileWriter writer = new FileWriter(html)) {
-                writer.write(writeHTML(city));
+                writer.write(writeHTML(city, pathToImages));
                 Desktop.getDesktop().browse(path.toUri());
             } catch(IOException ex) {
                 ex.printStackTrace();
@@ -72,10 +89,53 @@ public class CreateHTML {
                 boolean result_of_deleting = html.delete();
                 if (!result_of_deleting) {
                     System.out.println("Unable to delete "+ html.getName());
+                    System.exit(99_999);
                 } else {
-                    generateHTML(city, path);
+                    generateHTML(city, path, pathToImages);
                 }
+            } else {
+                System.exit(88_888);
             }
+        }
+    }
+
+    /**
+     * Este método crea una carpeta recursos y guarda cada chart en dicha carpeta, en formato png.
+     * @author Daniel Rodríguez Muñoz
+     * @param city City
+     * @param pathToImages Path
+     */
+    private void generateResourcesFolder(City city, Path pathToImages) {
+        for (Measurement meas : city.getMeteoMeasurements()) {
+            setUpChartsFolder(pathToImages, meas);
+        }
+        for (Measurement meas : city.getContaminationMeasurements()) {
+            setUpChartsFolder(pathToImages, meas);
+        }
+    }
+
+    /**
+     * Me gustaría decir que este método funciona correctamente, pero sólo crea las carpetas donde irían los png's, sin
+     * crear los susodichos.
+     * @author Daniel Rodríguez Muñoz
+     * @param pathToImages
+     * @param meas
+     */
+    private void setUpChartsFolder(Path pathToImages, Measurement meas) {
+        Path path = Paths.get(pathToImages + File.separator + meas.getMagnitude());
+        File file = path.toFile();
+        String pathImage = String.valueOf(path) + File.separator + meas.getMagnitude() + ".png";
+        boolean mkdirsDidItsJob = false;
+        try {
+            if (!(file.exists())){
+                mkdirsDidItsJob = file.mkdirs();
+            }
+            if (mkdirsDidItsJob) {
+                ChartUtilities.saveChartAsPNG(new File(pathImage),
+                        meas.getChart(), 450, 400);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -86,7 +146,7 @@ public class CreateHTML {
      * @return String
      * @see model.City
      */
-    private String writeHTML(City city) {
+    private String writeHTML(City city, Path pathToImages) {
         StringBuilder sb = new StringBuilder();
         sb.append(""); // esto está aquí para prevenir que returnee nulos, aunque sea redundante.
         String firstMeasDate = formateameDate(city.getFirstMeasurementDate());
@@ -124,7 +184,7 @@ public class CreateHTML {
                         "\t\t\t\t\t\t<li>Mínima registrada: " + measure.getMinValue() +
                         measure.getMeasurementUnitName() + " - " + formateameDate(measure.getMomentMinValue()) + "</li> \n" +
                         "\t\t\t\t\t\t<li>Evolución mensual: <br/> \n" +
-                        "\t\t\t\t\t\t\t<img src=\"" + /* aquí iría la jFreeChart*/ "name=\"" +
+                        "\t\t\t\t\t\t\t<img src=\"" + pathToImages + File.separator + measure.getMagnitude() + File.separator + measure.getMagnitude() + ".png\" name=\"" +
                         measure.getMagnitudeName() + "\" id=\"" + measure.getMagnitude() + "\"/> \n" +
                         "\t\t\t\t\t\t</li> \n" +
                         "\t\t\t\t\t</ul> \n" +
@@ -148,7 +208,7 @@ public class CreateHTML {
                 sb.append("\t\t\t\t\t\t\t</ul> \n" +
                         "\t\t\t\t\t\t</li>" +
                         "\t\t\t\t\t\t<li>Histograma: <br/> \n" +
-                        "\t\t\t\t\t\t\t<img src=\"" + /* aquí iría la jFreeChart*/ "name=\"" +
+                        "\t\t\t\t\t\t\t<img src=\"" + pathToImages + File.separator + measure.getMagnitude() + File.separator + measure.getMagnitude() + ".png\" name=\"" +
                         measure.getMagnitudeName() + "\" id=\"" + measure.getMagnitude() + "\"/> \n" +
                         "\t\t\t\t\t\t</li> \n" +
                         "\t\t\t\t\t</ul> \n" +
@@ -170,7 +230,7 @@ public class CreateHTML {
                     "\t\t\t\t\t\t<li>Mínima registrada: " + measure.getMinValue() +
                     measure.getMeasurementUnitName() + " - " + formateameDate(measure.getMomentMinValue()) + "</li> \n" +
                     "\t\t\t\t\t\t<li>Evolución mensual: <br/> \n" +
-                    "\t\t\t\t\t\t\t<img src=\"" + /* aquí iría la jFreeChart*/ "name=\"" +
+                    "\t\t\t\t\t\t\t<img src=\"" + pathToImages + File.separator + measure.getMagnitude() + File.separator + measure.getMagnitude() + ".png\" name=\"" +
                     measure.getMagnitudeName() + "\" id=\"" + measure.getMagnitude() + "\"/> \n" +
                     "\t\t\t\t\t\t</li> \n" +
                     "\t\t\t\t\t</ul> \n" +
@@ -216,11 +276,4 @@ public class CreateHTML {
         dateWithoutHour = Pattern.compile("[0-9]{2}:[0-9]{2}:[0-9]{2} GMT$").matcher(dateWithoutHour).replaceAll("");
         return dateWithoutHour;
     }
-
-    /*
-    private void metodoprueba (Measurement meas) {
-        meas.getChart();
-    }
-    
-     */
 }
